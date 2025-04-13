@@ -19,6 +19,7 @@ WS_URL = settings.WS_URL
 WS_ACCESS_TOKEN = settings.WS_ACCESS_TOKEN
 GITHUB_WEBHOOK_SECRET = settings.GITHUB_WEBHOOK_SECRET
 GITHUB_REPO = settings.GITHUB_REPO
+GITHUB_BRANCH = settings.GITHUB_BRANCH
 QQ_GROUP = settings.QQ_GROUP
 
 async def verify_signature(request: Request, x_hub_signature_256: str = Header(None)):
@@ -64,6 +65,10 @@ async def github_webhook(request: Request, verified: bool = Depends(verify_signa
         if repo_name not in GITHUB_REPO:
             logger.info("仓库 %s 不在允许的列表中，忽略", repo_name)
             return {"status": "ignored", "message": f"仓库 {repo_name} 不在允许的列表中"}
+
+        if branch not in GITHUB_BRANCH:
+            logger.info("分支 %s 不在允许的列表中，忽略", branch)
+            return {"status": "ignored", "message": f"分支 {branch} 不在允许的列表中"}
 
         logger.info("发现新的 push 事件，来自 %s 仓库", repo_name)
         logger.info("分支: %s， 推送者: %s， 提交数量: %d", branch, pusher, commit_count)

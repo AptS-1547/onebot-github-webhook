@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     WS_ACCESS_TOKEN: str = Field(default="")
     GITHUB_WEBHOOK_SECRET: str = Field(default="")
     GITHUB_REPO: List[str] = Field(default=[ "AptS-1547/AptS-1547" ])
+    GITHUB_BRANCH: List[str] = Field(default=[ "main" ])
     QQ_GROUP: List[int] = Field(default=[ 123456789 ])
 
     class Config:           # pylint: disable=too-few-public-methods
