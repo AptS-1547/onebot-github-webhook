@@ -33,7 +33,7 @@
 1. 克隆本仓库：
 
 ```bash
-git clone <仓库地址>
+git clone https://github.com/AptS-1547/onebot-github-webhook
 cd onebot-github-webhook
 ```
 
