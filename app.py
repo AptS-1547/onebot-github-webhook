@@ -20,6 +20,30 @@ WS_URL = settings.WS_URL
 WS_ACCESS_TOKEN = settings.WS_ACCESS_TOKEN
 GITHUB_WEBHOOK = settings.GITHUB_WEBHOOK
 
+def match_repository(repo_name: str, pattern: str) -> bool:
+    """
+    检查仓库名是否匹配配置中的模式
+    支持大小写不敏感匹配和通配符（用户名/*）形式
+    
+    Args:
+        repo_name: 实际的仓库全名 (例如 'user/repo')
+        pattern: 配置中的仓库模式 (例如 'user/repo' 或 'user/*')
+    
+    Returns:
+        bool: 是否匹配
+    """
+    if not repo_name or not pattern:
+        return False
+
+    repo_name = repo_name.lower()
+    pattern = pattern.lower()
+
+    if pattern.endswith('/*'):
+        user = pattern[:-2]
+        return repo_name.startswith(f"{user}/")
+
+    return repo_name == pattern
+
 async def verify_signature(request: Request, x_hub_signature_256: Optional[str] = Header(None)):
     """验证 GitHub webhook 签名"""
 
@@ -33,7 +57,7 @@ async def verify_signature(request: Request, x_hub_signature_256: Optional[str] 
 
     webhook_secret = None
     for webhook in settings.GITHUB_WEBHOOK:
-        if repo_name in webhook.REPO:
+        if any(match_repository(repo_name, repo_pattern) for repo_pattern in webhook.REPO):
             webhook_secret = webhook.SECRET
             break
 
@@ -83,7 +107,10 @@ async def github_webhook(request: Request):
 
     matched_webhook = None
     for webhook in settings.GITHUB_WEBHOOK:
-        if (repo_name in webhook.REPO and 
+
+        repo_matches = any(match_repository(repo_name, repo_pattern) for repo_pattern in webhook.REPO)
+
+        if (repo_matches and 
             branch in webhook.BRANCH and 
             event_type in webhook.EVENTS):
             matched_webhook = webhook
