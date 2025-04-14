@@ -1,10 +1,19 @@
 ENV: production
-WS_URL: "ws://localhost:8080"
-WS_ACCESS_TOKEN: "your_access_token"
-GITHUB_WEBHOOK_SECRET: "your_webhook_secret"
-GITHUB_REPO:
-  - "AptS-1547/AptS-1547"
-GITHUB_BRANCH:
-  - "main"
-QQ_GROUP:
-  - 123456789
+WS_URL: ''
+WS_ACCESS_TOKEN: ''
+GITHUB_WEBHOOK_SECRET: ''
+WEBHOOK:
+  - NAME: github
+    REPO:
+      - AptS-1547/onebot-github-webhook
+    BRANCH:
+      - main
+    EVENTS:
+      - push
+      - pull_request
+      - issues
+      - issue_comment
+      - release
+    ONEBOT:
+      - type: group
+        id: 123456789
