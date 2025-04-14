@@ -54,42 +54,24 @@ pip install -r requirements.txt
 4. 修改配置文件
 
 在程序第一次运行时会自动生成 `config.yaml` 文件，您可以根据需要修改其中的配置项。  
-或者复制 `config.example.yaml` 文件并重命名为 `config.yaml`，然后根据需要修改配置项。
+或者复制 `config.yaml.example` 文件并重命名为 `config.yaml`，然后根据需要修改配置项。
 
 ```bash
-cp config.example.yaml config.yaml
+cp config.yaml.example config.yaml
 ```
 
 ## 配置
 
-在 `config.yaml` 文件中配置以下信息：
+在 `.env` 文件中设置以下环境变量：
 
-| 配置项 | 说明 | 示例 |
+| 变量名 | 说明 | 示例 |
 |--------|------|------|
 | `WS_URL` | OneBot WebSocket 连接地址 | `ws://localhost:8080/ws` |
 | `WS_ACCESS_TOKEN` | OneBot 访问令牌 | `your_token` |
-| `GITHUB_WEBHOOK` | Webhook 配置列表 | 见下方说明 |
-
-### Webhook 配置示例
-
-```yaml
-GITHUB_WEBHOOK:
-  - NAME: github                           # Webhook 名称
-    REPO:                                  # 监听的仓库列表
-      - AptS-1547/onebot-github-webhook
-    BRANCH:                                # 监听的分支列表
-      - main
-    SECRET: your_webhook_secret            # GitHub Webhook 密钥
-    EVENTS:                                # 监听的事件类型
-      - push
-      - pull_request
-      - issues
-      - issue_comment
-      - release
-    ONEBOT:                                # 消息发送目标
-      - type: group                        # 目标类型：group 或 private
-        id: 123456789                      # 群号或用户 QQ 号
-```
+| `GITHUB_WEBHOOK_SECRET` | GitHub Webhook 密钥 | `your_secret` |
+| `GITHUB_REPO` | 监听的仓库列表 | `["username/repo"]` |
+| `GITHUB_BRANCH` | 监听的分支列表 | `["main", "develop"]` |
+| `QQ_GROUP` | 通知的 QQ 群号列表 | `[123456789]` |
 
 ## 运行
 
@@ -108,8 +90,8 @@ python app.py
 1. 在 GitHub 仓库中前往 Settings -> Webhooks -> Add webhook
 2. Payload URL 设置为 `http://你的服务器地址:8000/github-webhook`
 3. Content type 选择 `application/json`
-4. Secret 填写与配置文件中 `SECRET` 相同的值
-5. 选择需要监听的事件类型
+4. Secret 填写与 `.env` 中 `GITHUB_WEBHOOK_SECRET` 相同的值
+5. 选择 "Just the push event" 或根据需要选择事件
 6. 启用 webhook（勾选 "Active"）
 
 ## 项目结构
@@ -125,4 +107,3 @@ python app.py
 - Uvicorn: ASGI 服务器
 - aiohttp: 异步 HTTP 客户端
 - pydantic: 数据验证
-- PyYAML: YAML 配置文件解析
