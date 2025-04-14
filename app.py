@@ -90,7 +90,7 @@ async def github_webhook(request: Request):
             break
 
     if not matched_webhook:
-        logger.info("找不到匹配的 webhook 配置: 仓库=%s, 分支=%s, 事件类型=%s", repo_name, branch, event_type)
+        logger.info("找不到匹配的 webhook 配置: 仓库 %s, 分支 %s, 事件类型 %s", repo_name, branch, event_type)
         return {"status": "ignored", "message": "找不到匹配的 webhook 配置"}
 
     # 处理不同类型的事件，暂时只支持 push 事件

@@ -76,8 +76,7 @@ class Settings(BaseModel):
                 "ENV": "production",
                 "WS_URL": "",
                 "WS_ACCESS_TOKEN": "",
-                "GITHUB_WEBHOOK_SECRET": "",
-                "WEBHOOK": [
+                "GITHUB_WEBHOOK": [
                     {
                         "NAME": "github",
                         "REPO": ["AptS-1547/onebot-github-webhook"],
