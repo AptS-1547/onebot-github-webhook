@@ -2,4 +2,5 @@ aiohttp
 fastapi
 pydantic
 pydantic-settings
+pyyaml
 uvicorn

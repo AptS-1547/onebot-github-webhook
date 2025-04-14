@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
-settings = Settings()
+settings = Settings().from_yaml()
 
 # 全局变量
 WS_URL = settings.WS_URL
@@ -45,7 +45,7 @@ async def verify_signature(request: Request, x_hub_signature_256: str = Header(N
     return True
 
 @app.post("/github-webhook")
-async def github_webhook(request: Request, verified: bool = Depends(verify_signature)):
+async def github_webhook(request: Request, _: bool = Depends(verify_signature)):
     """
     处理 GitHub webhook 请求
     """

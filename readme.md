@@ -51,12 +51,13 @@ source .venv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
 ```
 
-4. 配置环境变量：
+4. 修改配置文件
 
-复制 `.env.examples` 文件为 `.env` 并编辑相关配置：
+在程序第一次运行时会自动生成 `config.yaml` 文件，您可以根据需要修改其中的配置项。
+或者复制 `config.yaml.example` 文件并重命名为 `config.yaml`，然后根据需要修改配置项。
 
 ```bash
-cp .env.examples .env
+cp config.yaml.example config.yaml
 ```
 
 ## 配置
