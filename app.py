@@ -104,21 +104,18 @@ async def github_webhook(request: Request):
 
         # 向配置的所有 OneBot 目标发送通知
         for target in matched_webhook.ONEBOT:
-            if target.type == "group":
-                logger.info("正在发送消息到 QQ 群 %s", target.id)
-                await send_github_notification(
-                    ws_url=settings.WS_URL,
-                    access_token=settings.WS_ACCESS_TOKEN,
-                    group_id=target.id,
-                    repo_name=repo_name,
-                    branch=branch,
-                    pusher=pusher,
-                    commit_count=commit_count,
-                    commits=commits
-                )
-            elif target.type == "private":
-                logger.info("正在发送消息到 QQ 用户 %s", target.id)
-                # TODO: 处理私聊消息
+            logger.info("正在发送消息到 QQ 群 %s", target.id)
+            await send_github_notification(
+                ws_url=settings.WS_URL,
+                access_token=settings.WS_ACCESS_TOKEN,
+                repo_name=repo_name,
+                branch=branch,
+                pusher=pusher,
+                commit_count=commit_count,
+                commits=commits,
+                onebot_type=target.type,
+                onebot_id=target.id
+            )
 
         return {"status": "success", "message": "处理 push 事件成功"}
     else:

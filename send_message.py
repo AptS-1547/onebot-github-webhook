@@ -99,42 +99,45 @@ def image(file: str) -> Dict[str, Any]:
     return {"type": "image", "data": {"file": file}}
 
 async def send_github_notification(
-    ws_url: str, 
+    ws_url: str,
     access_token: str,
-    group_id: int, 
-    repo_name: str, 
-    branch: str, 
-    pusher: str, 
+    repo_name: str,
+    branch: str,
+    pusher: str,
     commit_count: int,
-    commits: List[Dict]
+    commits: List[Dict],
+    onebot_type: str = "group",
+    onebot_id: int = 0
 ):
     """发送 GitHub 推送通知"""
     client = OneBotWebSocketClient(ws_url, access_token)
 
-    print(ws_url, type(ws_url))
-    
     # 构建消息
     message = [
-        text(f"📢 GitHub 推送通知\n"),
+        text("📢 GitHub 推送通知\n"),
         text(f"仓库：{repo_name}\n"),
         text(f"分支：{branch}\n"),
         text(f"推送者：{pusher}\n"),
         text(f"提交数量：{commit_count}\n\n")
     ]
-    
+
     # 添加最近的提交信息（最多3条）
     for i, commit in enumerate(commits[:3]):
         commit_id = commit.get("id", "")[:7]
         commit_msg = commit.get("message", "").split("\n")[0]  # 只取第一行
         author = commit.get("author", {}).get("name", "")
-        
+
         message.append(text(f"[{i+1}] {commit_id} by {author}\n"))
         message.append(text(f"    {commit_msg}\n"))
-    
+
     # 发送消息
     try:
-        result = await client.send_group_message(group_id, message)
+        if onebot_type == "group":
+            result = await client.send_group_message(onebot_id, message)
+        else:
+            logger.error("不支持的 OneBot 类型: %s", onebot_type)
+            return None
         return result
     except Exception as e:
-        logger.error(f"发送 GitHub 通知失败: {e}")
+        logger.error("发送 GitHub 通知失败: %s", e)
         return None
