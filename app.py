@@ -50,6 +50,12 @@ async def github_webhook(request: Request, _: bool = Depends(verify_signature)):
     处理 GitHub webhook 请求
     """
 
+    content_type = request.headers.get("Content-Type")
+
+    if content_type != "application/json":
+        logger.info("收到非 JSON 格式的请求，忽略")
+        return {"status": "ignored", "message": "只处理 application/json 格式的请求"}
+
     event_type = request.headers.get("X-GitHub-Event")
 
     payload = await request.json()
