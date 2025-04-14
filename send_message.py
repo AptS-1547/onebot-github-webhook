@@ -19,9 +19,10 @@ class OneBotWebSocketClient:
         self.ws_url = ws_url
         self.access_token = access_token
 
-    async def send_group_message(
+    async def send_message(
         self,
-        group_id: int,
+        onebot_type: str,
+        onebot_id: int,
         message: Union[str, List[Dict[str, Any]]],
         auto_escape: bool = False
     ) -> Dict[str, Any]:
@@ -29,7 +30,8 @@ class OneBotWebSocketClient:
         发送群消息
         
         参数:
-            group_id: 群号
+            user_id: 发送消息的用户 ID
+            onebot_id: 发送消息的群 ID
             message: 要发送的消息，可以是字符串或消息段列表
             auto_escape: 是否转义 CQ 码，默认为 False
         
@@ -37,14 +39,19 @@ class OneBotWebSocketClient:
             API 响应
         """
         request = {
-            "action": "send_group_msg",
+            "action": "send_msg",
             "params": {
-                "group_id": group_id,
+                "message_type": onebot_type,
                 "message": message,
                 "auto_escape": auto_escape
             },
             "echo": "The_ESAP_Project_Github_Notification"
         }
+
+        if onebot_type == "group":
+            request["params"]["group_id"] = onebot_id
+        elif onebot_type == "private":
+            request["params"]["user_id"] = onebot_id
 
         # 准备 headers
         headers = {}
@@ -132,8 +139,8 @@ async def send_github_notification(
 
     # 发送消息
     try:
-        if onebot_type == "group":
-            result = await client.send_group_message(onebot_id, message)
+        if onebot_type in ["group", "private"]:
+            result = await client.send_message(onebot_type, onebot_id, message)
         else:
             logger.error("不支持的 OneBot 类型: %s", onebot_type)
             return None

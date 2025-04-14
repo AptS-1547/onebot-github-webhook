@@ -49,8 +49,8 @@ class Settings(BaseModel):
 
             if config_data:
                 # 处理 WEBHOOK 字段，使其符合 OnebotTarget 模型
-                if "WEBHOOK" in config_data:
-                    for webhook in config_data["WEBHOOK"]:
+                if "GITHUB_WEBHOOK" in config_data:
+                    for webhook in config_data["GITHUB_WEBHOOK"]:
                         if "ONEBOT" in webhook:
                             for i, target in enumerate(webhook["ONEBOT"]):
                                 # 确保每个target是一个OnebotTarget对象
