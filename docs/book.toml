@@ -1,0 +1,10 @@
+[book]
+authors = ["AptS-1547"]
+language = "zh-CN"
+multilingual = false
+src = "src"
+title = "OneBot GitHub Webhook"
+
+[output.html]
+git-repository-url = "https://github.com/AptS-1547/onebot-github-webhook"
+edit-url-template = "https://github.com/AptS-1547/onebot-github-webhook/edit/master/docs/{path}"
