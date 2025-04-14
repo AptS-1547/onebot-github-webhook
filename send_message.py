@@ -5,6 +5,9 @@ import aiohttp
 
 logger = logging.getLogger(__name__)
 
+class WSConnectionException(Exception):
+    """WebSocket 连接异常"""
+
 class OneBotWebSocketClient:
     """基于 aiohttp 的 OneBot V11 WebSocket 客户端，仅用于发送消息"""
 
@@ -79,17 +82,17 @@ class OneBotWebSocketClient:
                         logger.debug("WebSocket 连接已关闭")
                         return {"status": "ok", "retcode": 0, "data": {"message_id": -1}}
                     elif response.type == aiohttp.WSMsgType.ERROR:
-                        logger.error(f"WebSocket 连接错误: {ws.exception()}")
-                        raise ws.exception()
+                        logger.error("WebSocket 连接错误: %s", ws.exception())
+                        raise WSConnectionException("WebSocket 连接错误")
                     else:
-                        logger.warning(f"收到未知类型的消息: {response.type}")
+                        logger.warning("收到未知类型的消息: %s", response.type)
                         return {"status": "error", "retcode": -1, "message": f"未知响应类型: {response.type}"}
 
         except aiohttp.ClientError as e:
-            logger.error(f"aiohttp 客户端错误: {e}")
+            logger.error("aiohttp 客户端错误: %s", e)
             raise
         except Exception as e:
-            logger.error(f"发送群消息时出错: {e}")
+            logger.error("发送群消息时出错: %s", e)
             raise
 
 # 消息段工具函数
@@ -145,6 +148,6 @@ async def send_github_notification(
             logger.error("不支持的 OneBot 类型: %s", onebot_type)
             return None
         return result
-    except Exception as e:
+    except Exception as e:                                 # pylint: disable=broad-except
         logger.error("发送 GitHub 通知失败: %s", e)
         return None

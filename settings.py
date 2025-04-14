@@ -60,7 +60,7 @@ class Settings(BaseModel):
                 # 使用 model_validate 创建实例
                 try:
                     return cls.model_validate(config_data)
-                except Exception as e:
+                except Exception as e:                # pylint: disable=broad-except
                     print(f"配置验证失败: {e}")
                     print("使用部分配置和默认值")
 
