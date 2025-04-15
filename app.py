@@ -69,14 +69,15 @@ async def github_webhook(request: Request):
         for target in matched_webhook.ONEBOT:
             logger.info("正在发送消息到 QQ 群 %s", target.id)
             await send_github_notification(
-                ws_url=settings.WS_URL,
-                access_token=settings.WS_ACCESS_TOKEN,
+                onebot_type=settings.ONEBOT_TYPE,
+                onebot_url=settings.ONEBOT_URL,
+                access_token=settings.ONEBOT_ACCESS_TOKEN,
                 repo_name=push_data["repo_name"],
                 branch=push_data["branch"],
                 pusher=push_data["pusher"],
                 commit_count=push_data["commit_count"],
                 commits=push_data["commits"],
-                onebot_type=target.type,
+                onebot_send_type=target.type,
                 onebot_id=target.id
             )
 

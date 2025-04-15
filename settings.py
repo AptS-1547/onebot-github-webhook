@@ -22,8 +22,9 @@ class Settings(BaseModel):
     """配置类"""
 
     ENV: str = "production"
-    WS_URL: str = ""
-    WS_ACCESS_TOKEN: str = ""
+    ONEBOT_URL: str = ""
+    ONEBOT_TYPE: Literal["http", "ws"] = "ws"
+    ONEBOT_ACCESS_TOKEN: str = ""
     GITHUB_WEBHOOK: List[WebhookConfig] = []
 
     @field_validator("WS_URL")
@@ -74,8 +75,9 @@ class Settings(BaseModel):
             # 创建默认配置文件
             default_config = {
                 "ENV": "production",
-                "WS_URL": "",
-                "WS_ACCESS_TOKEN": "",
+                "ONEBOT_URL": "",
+                "ONEBOT_TYPE": "ws",
+                "ONEBOT_ACCESS_TOKEN": "",
                 "GITHUB_WEBHOOK": [
                     {
                         "NAME": "github",
