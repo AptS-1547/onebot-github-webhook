@@ -2,7 +2,7 @@ import pathlib
 from typing import List, Literal
 
 import yaml
-from pydantic import field_validator, BaseModel
+from pydantic import model_validator, BaseModel
 
 class OnebotTarget(BaseModel):
     """OneBot 目标类型"""
@@ -27,15 +27,15 @@ class Settings(BaseModel):
     ONEBOT_ACCESS_TOKEN: str = ""
     GITHUB_WEBHOOK: List[WebhookConfig] = []
 
-    @field_validator("ONEBOT_URL")
-    @classmethod
-    def check_onebot_url(cls, value):
-        """检查 ONEBOT_URL 的格式"""
-        if value and cls.ONEBOT_TYPE == "ws" and not value.startswith("ws://") and not value.startswith("wss://"):
-            raise ValueError("当 ONEBOT_TYPE 为 ws 时，ONEBOT_URL 必须以 'ws://' 或 'wss://' 开头")
-        elif value and cls.ONEBOT_TYPE == "http" and not value.startswith("http://") and not value.startswith("https://"):
-            raise ValueError("当 ONEBOT_TYPE 为 http 时，ONEBOT_URL 必须以 'http://' 或 'https://' 开头")
-        return value
+    @model_validator(mode='after')
+    def validate_onebot_url(self) -> 'Settings':
+        """验证 ONEBOT_URL 的格式是否与 ONEBOT_TYPE 匹配"""
+        if self.ONEBOT_URL:
+            if self.ONEBOT_TYPE == "ws" and not (self.ONEBOT_URL.startswith("ws://") or self.ONEBOT_URL.startswith("wss://")):
+                raise ValueError("当 ONEBOT_TYPE 为 ws 时，ONEBOT_URL 必须以 'ws://' 或 'wss://' 开头")
+            elif self.ONEBOT_TYPE == "http" and not (self.ONEBOT_URL.startswith("http://") or self.ONEBOT_URL.startswith("https://")):
+                raise ValueError("当 ONEBOT_TYPE 为 http 时，ONEBOT_URL 必须以 'http://' 或 'https://' 开头")
+        return self
 
     @classmethod
     def from_yaml(cls, yaml_file: str = "config.yaml"):
