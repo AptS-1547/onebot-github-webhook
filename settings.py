@@ -27,12 +27,14 @@ class Settings(BaseModel):
     ONEBOT_ACCESS_TOKEN: str = ""
     GITHUB_WEBHOOK: List[WebhookConfig] = []
 
-    @field_validator("WS_URL")
+    @field_validator("ONEBOT_URL")
     @classmethod
-    def check_ws_url(cls, value):
-        """检查 WS_URL 的格式"""
-        if value and not value.startswith("ws://") and not value.startswith("wss://"):
-            raise ValueError("WS_URL must start with 'ws://' or 'wss://'")
+    def check_onebot_url(cls, value):
+        """检查 ONEBOT_URL 的格式"""
+        if value and cls.ONEBOT_TYPE == "ws" and not value.startswith("ws://") and not value.startswith("wss://"):
+            raise ValueError("当 ONEBOT_TYPE 为 ws 时，ONEBOT_URL 必须以 'ws://' 或 'wss://' 开头")
+        elif value and cls.ONEBOT_TYPE == "http" and not value.startswith("http://") and not value.startswith("https://"):
+            raise ValueError("当 ONEBOT_TYPE 为 http 时，ONEBOT_URL 必须以 'http://' 或 'https://' 开头")
         return value
 
     @classmethod

@@ -68,8 +68,9 @@ cp config.yaml.example config.yaml
 
 ```yaml
 ENV: "production"  # 环境变量，可选值为 "production" 或 "development"
-WS_URL: "ws://localhost:8080/ws"  # OneBot WebSocket 连接地址
-WS_ACCESS_TOKEN: "your_token"  # OneBot 访问令牌
+ONEBOT_URL: "ws://localhost:8080/ws"  # OneBot 连接地址
+ONEBOT_TYPE: "ws"  # OneBot 连接类型，可选值为 "ws" 或 "http"
+ONEBOT_ACCESS_TOKEN: "your_token"  # OneBot 访问令牌
 
 GITHUB_WEBHOOK:
   - NAME: "github"  # webhook 名称

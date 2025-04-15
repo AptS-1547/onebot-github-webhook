@@ -1,6 +1,7 @@
 ENV: production
-WS_URL: ''
-WS_ACCESS_TOKEN: ''
+ONEBOT_URL: ''
+ONEBOT_TYPE: 'ws'
+ONEBOT_ACCESS_TOKEN: ''
 GITHUB_WEBHOOK:
   - NAME: github
     REPO:
