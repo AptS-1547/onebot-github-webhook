@@ -26,6 +26,8 @@
 - 支持 Webhook 签名验证，确保请求安全
 - 通过 OneBot 协议将推送信息转发到指定的 QQ 群
 - 可配置监听的仓库和分支
+- 支持大小写不敏感的仓库名匹配
+- 支持用户名/* 通配符匹配所有仓库
 - 格式化的推送通知消息，包含仓库、分支、推送者和最新提交信息
 
 ## 安装
@@ -60,18 +62,34 @@ pip install -r requirements.txt
 cp config.yaml.example config.yaml
 ```
 
-## 配置
+## 配置说明
 
-在 `.env` 文件中设置以下环境变量：
+配置文件 `config.yaml` 的结构如下：
 
-| 变量名 | 说明 | 示例 |
-|--------|------|------|
-| `WS_URL` | OneBot WebSocket 连接地址 | `ws://localhost:8080/ws` |
-| `WS_ACCESS_TOKEN` | OneBot 访问令牌 | `your_token` |
-| `GITHUB_WEBHOOK_SECRET` | GitHub Webhook 密钥 | `your_secret` |
-| `GITHUB_REPO` | 监听的仓库列表 | `["username/repo"]` |
-| `GITHUB_BRANCH` | 监听的分支列表 | `["main", "develop"]` |
-| `QQ_GROUP` | 通知的 QQ 群号列表 | `[123456789]` |
+```yaml
+ENV: "production"  # 环境变量，可选值为 "production" 或 "development"
+WS_URL: "ws://localhost:8080/ws"  # OneBot WebSocket 连接地址
+WS_ACCESS_TOKEN: "your_token"  # OneBot 访问令牌
+
+GITHUB_WEBHOOK:
+  - NAME: "github"  # webhook 名称
+    REPO:  # 监听的仓库列表，支持用户名/* 匹配用户所有仓库
+      - "username/repo"
+      - "username/*"
+    BRANCH:  # 监听的分支列表
+      - "main"
+      - "develop"
+    SECRET: "your_secret"  # GitHub Webhook 密钥
+    EVENTS:  # 监听的事件类型
+      - "push"
+      - "pull_request"
+      - "issues"
+      - "issue_comment"
+      - "release"
+    ONEBOT:  # 通知的 OneBot 目标列表
+      - type: "group"  # 目标类型，可选值为 "group" 或 "private"
+        id: 123456789  # 目标 ID，群号或用户 ID
+```
 
 ## 运行
 
@@ -90,13 +108,14 @@ python app.py
 1. 在 GitHub 仓库中前往 Settings -> Webhooks -> Add webhook
 2. Payload URL 设置为 `http://你的服务器地址:8000/github-webhook`
 3. Content type 选择 `application/json`
-4. Secret 填写与 `.env` 中 `GITHUB_WEBHOOK_SECRET` 相同的值
+4. Secret 填写与配置文件中 `SECRET` 相同的值
 5. 选择 "Just the push event" 或根据需要选择事件
 6. 启用 webhook（勾选 "Active"）
 
 ## 项目结构
 
 - [app.py](app.py): 主应用入口和 Web 服务器
+- [hooks/github_webhook.py](hooks/github_webhook.py): GitHub Webhook 处理逻辑
 - [send_message.py](send_message.py): OneBot 消息发送客户端
 - [settings.py](settings.py): 配置加载和验证
 - [requirements.txt](requirements.txt): 项目依赖
@@ -107,3 +126,4 @@ python app.py
 - Uvicorn: ASGI 服务器
 - aiohttp: 异步 HTTP 客户端
 - pydantic: 数据验证
+- PyYAML: YAML 配置文件解析
