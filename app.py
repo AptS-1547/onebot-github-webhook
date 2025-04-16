@@ -1,3 +1,12 @@
+"""
+OneBot GitHub Webhook 入口文件
+本文件用于接收 GitHub Webhook 事件，并将其转发到配置的 OneBot 目标。
+作者：AptS:1547
+版本：0.1.0-alpha
+日期：2025-04-17
+本程序遵循 GPL-3.0 许可证
+"""
+
 import logging
 from fastapi import FastAPI, Request, HTTPException
 
@@ -13,7 +22,7 @@ app = FastAPI()
 settings = Settings().from_yaml()
 
 @app.post("/github-webhook")
-async def github_webhook(request: Request):
+async def github_webhook(request: Request):      # pylint: disable=too-many-return-statements
     """处理 GitHub webhook 请求"""
 
     content_type = request.headers.get("Content-Type")
@@ -28,12 +37,12 @@ async def github_webhook(request: Request):
 
     try:
         await verify_signature(
-            request, 
-            settings.GITHUB_WEBHOOK, 
+            request,
+            settings.GITHUB_WEBHOOK,
             request.headers.get("X-Hub-Signature-256")
         )
     except HTTPException as e:
-        logger.info(f"签名验证失败: {e.detail}")
+        logger.info("签名验证失败: %s", e.detail)
         return {"status": "ignored", "message": f"签名验证失败: {e.detail}"}
 
     payload = await request.json()
@@ -82,9 +91,9 @@ async def github_webhook(request: Request):
             )
 
         return {"status": "success", "message": "处理 push 事件成功"}
-    else:
-        logger.info("收到 %s 事件，但尚未实现处理逻辑", event_type)
-        return {"status": "ignored", "message": f"暂不处理 {event_type} 类型的事件"}
+
+    logger.info("收到 %s 事件，但尚未实现处理逻辑", event_type)
+    return {"status": "ignored", "message": f"暂不处理 {event_type} 类型的事件"}
 
 if __name__ == "__main__":
     import uvicorn

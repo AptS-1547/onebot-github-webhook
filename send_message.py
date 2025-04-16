@@ -1,3 +1,11 @@
+"""
+OneBot V11 客户端
+本模块提供了一个 OneBot V11 客户端的实现，支持通过 WebSocket 和 HTTP 发送消息。
+作者：AptS:1547
+版本：0.1.0-alpha
+日期：2025-04-17
+本程序遵循 GPL-3.0 许可证
+"""
 import json
 import logging
 from typing import Union, List, Dict, Any
@@ -8,7 +16,7 @@ logger = logging.getLogger(__name__)
 class WSConnectionException(Exception):
     """WebSocket 连接异常"""
 
-class OnebotClient:
+class OnebotClient:                           # pylint: disable=too-few-public-methods
     """OneBot 客户端基类"""
     def __init__(self, onebot_url: str, access_token: str = ""):
         """
@@ -42,7 +50,7 @@ class OnebotClient:
         """
         raise NotImplementedError("send_message 方法需要在子类中实现")
 
-class OneBotWebSocketClient(OnebotClient):
+class OneBotWebSocketClient(OnebotClient):      # pylint: disable=too-few-public-methods
     """基于 aiohttp 的 OneBot V11 WebSocket 客户端，仅用于发送消息"""
 
     async def send_message(
@@ -109,7 +117,7 @@ class OneBotWebSocketClient(OnebotClient):
                         raise WSConnectionException("WebSocket 连接错误")
                     else:
                         logger.warning("收到未知类型的消息: %s", response.type)
-                        return {"status": "error", "retcode": -1, "message": f"未知响应类型: {response.type}"}
+                        return {"status": "error", "retcode": -1, "message": f"未知响应类型: {response.type}"}      # pylint: disable=line-too-long
 
         except aiohttp.ClientError as e:
             logger.error("aiohttp 客户端错误: %s", e)
@@ -118,7 +126,7 @@ class OneBotWebSocketClient(OnebotClient):
             logger.error("发送群消息时出错: %s", e)
             raise
 
-class OneBotHTTPClient(OnebotClient):
+class OneBotHTTPClient(OnebotClient):            # pylint: disable=too-few-public-methods
     """基于 aiohttp 的 OneBot V11 HTTP 客户端，仅用于发送消息"""
 
     async def send_message(
@@ -169,7 +177,7 @@ class OneBotHTTPClient(OnebotClient):
                     # 检查响应状态码
                     if response.status != 200:
                         logger.error("HTTP 请求失败，状态码: %s", response.status)
-                        return {"status": "error", "retcode": -1, "message": f"HTTP 错误: {response.status}"}
+                        return {"status": "error", "retcode": -1, "message": f"HTTP 错误: {response.status}"}      # pylint: disable=line-too-long
 
                     # 解析 JSON 响应
                     data = await response.json()
@@ -195,7 +203,7 @@ def image(file: str) -> Dict[str, Any]:
     """图片消息"""
     return {"type": "image", "data": {"file": file}}
 
-async def send_github_notification(
+async def send_github_notification(         # pylint: disable=too-many-arguments,too-many-locals,too-many-positional-arguments
     onebot_type: str,
     onebot_url: str,
     access_token: str,

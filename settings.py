@@ -1,3 +1,12 @@
+"""
+Onebot Github Webhook 配置类
+本文件用于定义 Onebot Github Webhook 的配置类和验证逻辑。
+作者：AptS:1547
+版本：0.1.0-alpha
+日期：2025-04-17
+本程序遵循 GPL-3.0 许可证
+"""
+
 import pathlib
 from typing import List, Literal
 
@@ -31,9 +40,9 @@ class Settings(BaseModel):
     def validate_onebot_url(self) -> 'Settings':
         """验证 ONEBOT_URL 的格式是否与 ONEBOT_TYPE 匹配"""
         if self.ONEBOT_URL:
-            if self.ONEBOT_TYPE == "ws" and not (self.ONEBOT_URL.startswith("ws://") or self.ONEBOT_URL.startswith("wss://")):
+            if self.ONEBOT_TYPE == "ws" and not (self.ONEBOT_URL.startswith("ws://") or self.ONEBOT_URL.startswith("wss://")):          # pylint: disable=line-too-long
                 raise ValueError("当 ONEBOT_TYPE 为 ws 时，ONEBOT_URL 必须以 'ws://' 或 'wss://' 开头")
-            elif self.ONEBOT_TYPE == "http" and not (self.ONEBOT_URL.startswith("http://") or self.ONEBOT_URL.startswith("https://")):
+            if self.ONEBOT_TYPE == "http" and not (self.ONEBOT_URL.startswith("http://") or self.ONEBOT_URL.startswith("https://")):    # pylint: disable=line-too-long
                 raise ValueError("当 ONEBOT_TYPE 为 http 时，ONEBOT_URL 必须以 'http://' 或 'https://' 开头")
         return self
 
@@ -46,7 +55,7 @@ class Settings(BaseModel):
         settings = cls()
 
         # 如果配置文件存在，则加载
-        if config_path.exists():
+        if config_path.exists():         # pylint: disable=too-many-nested-blocks
             with open(config_path, 'r', encoding='utf-8') as f:
                 config_data = yaml.safe_load(f)
 
@@ -94,8 +103,14 @@ class Settings(BaseModel):
                 ]
             }
 
-            with open(config_path, 'w', encoding='utf-8') as f:
-                yaml.dump(default_config, f, indent=2, sort_keys=False, default_flow_style=False, allow_unicode=True)
+            with open(config_path, 'w', encoding='utf-8') as file:
+                yaml.dump(default_config,
+                          file,
+                          indent=2,
+                          sort_keys=False,
+                          default_flow_style=False,
+                          allow_unicode=True
+                          )
 
             print(f"已创建默认配置文件：{config_path}")
 
