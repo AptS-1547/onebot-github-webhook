@@ -1,0 +1,55 @@
+# Git
+.git
+.gitignore
+.github
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 配置和敏感文件
+.env
+config.yaml
+*.pem
+*.key
+
+# 编辑器配置
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 日志和临时文件
+logs/
+*.log
+tmp/
+.DS_Store
+
+# 测试
+test/
+tests/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 文档
+docs/
+*.md
+LICENSE
+
+# 容器相关
+Dockerfile
+.dockerignore
+docker-compose.yml
