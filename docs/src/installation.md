@@ -1,4 +1,3 @@
-
 ## 安装
 
 1. 克隆本仓库：
@@ -22,10 +21,10 @@ source .venv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
 ```
 
-4. 修改配置文件
+4. 配置文件设置：
 
-在程序第一次运行时会自动生成 `config.yaml` 文件，您可以根据需要修改其中的配置项。  
-或者复制 `config.yaml.example` 文件并重命名为 `config.yaml`，然后根据需要修改配置项。
+在程序第一次运行时会自动生成 config.yaml 文件，您可以根据需要修改其中的配置项。  
+或者复制示例配置文件：
 
 ```bash
 cp config.yaml.example config.yaml
@@ -33,7 +32,7 @@ cp config.yaml.example config.yaml
 
 ## 配置说明
 
-配置文件 `config.yaml` 的结构如下：
+配置文件 config.yaml 的结构如下：
 
 ```yaml
 ENV: "production"  # 环境变量，可选值为 "production" 或 "development"
@@ -60,3 +59,24 @@ GITHUB_WEBHOOK:
       - type: "group"  # 目标类型，可选值为 "group" 或 "private"
         id: 123456789  # 目标 ID，群号或用户 ID
 ```
+
+## 运行
+
+```bash
+uvicorn app:app --host 0.0.0.0 --port 8000
+```
+
+或者直接执行：
+
+```bash
+python app.py
+```
+
+## GitHub Webhook 设置
+
+1. 在 GitHub 仓库中前往 Settings -> Webhooks -> Add webhook
+2. Payload URL 设置为 `http://你的服务器地址:8000/github-webhook`
+3. Content type 选择 `application/json`
+4. Secret 填写与配置文件中 `SECRET` 相同的值
+5. 选择需要监听的事件（或选择 "Send me everything" 接收所有事件）
+6. 启用 webhook（勾选 "Active"）
