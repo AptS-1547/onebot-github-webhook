@@ -109,15 +109,15 @@ class OneBotWebSocketClient(OnebotClient):      # pylint: disable=too-few-public
                     # 处理消息类型
                     if response.type == aiohttp.WSMsgType.TEXT:
                         return json.loads(response.data)
-                    elif response.type == aiohttp.WSMsgType.CLOSED:
+                    if response.type == aiohttp.WSMsgType.CLOSED:
                         logger.debug("WebSocket 连接已关闭")
                         return {"status": "ok", "retcode": 0, "data": {"message_id": -1}}
-                    elif response.type == aiohttp.WSMsgType.ERROR:
+                    if response.type == aiohttp.WSMsgType.ERROR:
                         logger.error("WebSocket 连接错误: %s", ws.exception())
                         raise WSConnectionException("WebSocket 连接错误")
-                    else:
-                        logger.warning("收到未知类型的消息: %s", response.type)
-                        return {"status": "error", "retcode": -1, "message": f"未知响应类型: {response.type}"}      # pylint: disable=line-too-long
+
+                    logger.warning("收到未知类型的消息: %s", response.type)
+                    return {"status": "error", "retcode": -1, "message": f"未知响应类型: {response.type}"}      # pylint: disable=line-too-long
 
         except aiohttp.ClientError as e:
             logger.error("aiohttp 客户端错误: %s", e)
