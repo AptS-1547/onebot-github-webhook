@@ -67,7 +67,7 @@ async def github_webhook(request: Request):
 
         # 向配置的所有 OneBot 目标发送通知
         for target in matched_webhook.ONEBOT:
-            logger.info("正在发送消息到 QQ 群 %s", target.id)
+            logger.info("正在发送消息到 QQ %s %s", target.type, target.id)
             await send_github_notification(
                 onebot_type=settings.ONEBOT_TYPE,
                 onebot_url=settings.ONEBOT_URL,
