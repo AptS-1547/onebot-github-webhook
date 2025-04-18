@@ -1,0 +1,5 @@
+📋 GitHub Issue {{ action }}
+仓库：{{ repo_name }}
+标题：{{ issue.title }}
+作者：{{ issue.user.login }}
+链接：{{ issue.html_url }}

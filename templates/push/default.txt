@@ -1,0 +1,10 @@
+📢 GitHub 推送通知
+仓库：{{ repo_name }}
+分支：{{ branch }}
+推送者：{{ pusher }}
+提交数量：{{ commit_count }}
+{% for commit in commits[:3] %}
+[{{ loop.index }}] {{ commit.id[:7] }} by {{ commit.author.name }}
+  {{ commit.message.split('
+')[0] }}
+{% endfor %}
