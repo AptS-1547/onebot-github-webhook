@@ -1,6 +1,6 @@
 ## 部署建议
 
-### Docker 部署（计划支持）
+### Docker 部署
 
 ```bash
 docker run -d \

@@ -10,6 +10,7 @@ GitHub Webhook 处理模块
 import hmac
 import hashlib
 import logging
+import fnmatch
 from typing import Optional, Dict, Any, List
 
 from fastapi import Request, HTTPException, Header
@@ -19,11 +20,11 @@ logger = logging.getLogger(__name__)
 def match_repository(repo_name: str, pattern: str) -> bool:
     """
     检查仓库名是否匹配配置中的模式
-    支持大小写不敏感匹配和通配符（用户名/*）形式
+    支持大小写不敏感匹配和通配符模式
 
     Args:
         repo_name: 实际的仓库全名 (例如 'user/repo')
-        pattern: 配置中的仓库模式 (例如 'user/repo' 或 'user/*')
+        pattern: 配置中的仓库模式 (例如 'user/repo', 'user/*', '*/*-api')
 
     Returns:
         bool: 是否匹配
@@ -34,11 +35,36 @@ def match_repository(repo_name: str, pattern: str) -> bool:
     repo_name = repo_name.lower()
     pattern = pattern.lower()
 
-    if pattern.endswith('/*'):
-        user = pattern[:-2]
-        return repo_name.startswith(f"{user}/")
+    if '*' in pattern or '?' in pattern or '[' in pattern:
+        return fnmatch.fnmatch(repo_name, pattern)
 
     return repo_name == pattern
+
+def match_branch(branch: str, pattern: str) -> bool:
+    """
+    检查分支名是否匹配配置中的模式
+    支持大小写不敏感匹配和通配符（*）形式
+
+    Args:
+        branch: 实际的分支名 (例如 'main')
+        pattern: 配置中的分支模式 (例如 'main' 或 '*/feature/*')
+
+    Returns:
+        bool: 是否匹配
+    """
+    if not branch or not pattern:
+        return False
+
+    branch = branch.lower()
+    pattern = pattern.lower()
+
+    if pattern == "*":
+        return True
+
+    if '*' in pattern or '?' in pattern or '[' in pattern:
+        return fnmatch.fnmatch(branch, pattern)
+
+    return branch == pattern
 
 async def verify_signature(
         request: Request,
@@ -101,12 +127,16 @@ def find_matching_webhook(
         匹配的 webhook 配置或 None
     """
     for webhook in webhooks:
+        # 检查仓库名是否匹配配置中的任一模式
         repo_matches = any(match_repository(repo_name, repo_pattern)
-                           for repo_pattern in webhook.REPO)
+                          for repo_pattern in webhook.REPO)
 
-        if (repo_matches and
-            branch in webhook.BRANCH and
-                event_type in webhook.EVENTS):
+        # 检查分支名是否匹配配置中的任一模式
+        branch_matches = any(match_branch(branch, branch_pattern)
+                            for branch_pattern in webhook.BRANCH)
+
+        # 检查事件类型是否匹配
+        if (repo_matches and branch_matches and event_type in webhook.EVENTS):
             return webhook
 
     return None
