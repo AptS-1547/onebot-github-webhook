@@ -28,9 +28,10 @@
 - **安全验证**：支持 Webhook 签名验证，确保请求安全性
 - **OneBot 协议支持**：通过 OneBot 协议将推送信息转发到指定的 QQ 群或私聊
 - **灵活配置**：可配置监听的仓库、分支和事件类型
-- **高级仓库匹配**：
-  - 支持大小写不敏感的仓库名匹配
-  - 支持 `用户名/*` 通配符匹配用户的所有仓库
+- **高级匹配规则**：
+  - **仓库匹配**：支持通配符模式（如 `user/*`、`*/*-api`、`org/[abc]*` 等）
+  - **分支匹配**：支持通配符模式（如 `main`、`release-*`、`feature/*` 等）
+  - 大小写不敏感匹配
 - **格式化消息**：结构化的推送通知，包含仓库、分支、推送者和最新提交信息
 
 ### 计划实现功能
@@ -101,12 +102,15 @@ ONEBOT_ACCESS_TOKEN: "your_token"  # OneBot 访问令牌
 
 GITHUB_WEBHOOK:
   - NAME: "github"  # webhook 名称
-    REPO:  # 监听的仓库列表，支持用户名/* 匹配用户所有仓库
+    REPO:  # 监听的仓库列表，支持通配符匹配
       - "username/repo"
       - "username/*"
-    BRANCH:  # 监听的分支列表
+      - "*/*-api"
+    BRANCH:  # 监听的分支列表，支持通配符匹配
       - "main"
       - "develop"
+      - "feature/*"
+      - "release-*"
     SECRET: "your_secret"  # GitHub Webhook 密钥
     EVENTS:  # 监听的事件类型
       - "push"
@@ -272,7 +276,7 @@ GITHUB_API_POLLING:
 ## 项目结构
 
 - app.py: 主应用入口和 Web 服务器
-- github_webhook.py: GitHub Webhook 处理逻辑
+- hooks/github_webhook.py: GitHub Webhook 处理逻辑
 - send_message.py: OneBot 消息发送客户端
 - settings.py: 配置加载和验证
 - requirements.txt: 项目依赖
