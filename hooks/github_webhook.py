@@ -17,54 +17,33 @@ from fastapi import Request, HTTPException, Header
 
 logger = logging.getLogger(__name__)
 
-def match_repository(repo_name: str, pattern: str) -> bool:
+def match_pattern(value: str, pattern: str) -> bool:
     """
-    检查仓库名是否匹配配置中的模式
+    检查字符串是否匹配配置中的模式
     支持大小写不敏感匹配和通配符模式
 
     Args:
-        repo_name: 实际的仓库全名 (例如 'user/repo')
-        pattern: 配置中的仓库模式 (例如 'user/repo', 'user/*', '*/*-api')
+        value: 要匹配的字符串 (例如 'user/repo' 或 'main')
+        pattern: 配置中的模式 (例如 'user/*', 'feature/*')
+        treat_star_as_all: 是否将单独的 "*" 视为匹配所有内容（用于分支匹配）
 
     Returns:
         bool: 是否匹配
     """
-    if not repo_name or not pattern:
+    if not value or not pattern:
         return False
 
-    repo_name = repo_name.lower()
+    value = value.lower()
     pattern = pattern.lower()
 
-    if '*' in pattern or '?' in pattern or '[' in pattern:
-        return fnmatch.fnmatch(repo_name, pattern)
-
-    return repo_name == pattern
-
-def match_branch(branch: str, pattern: str) -> bool:
-    """
-    检查分支名是否匹配配置中的模式
-    支持大小写不敏感匹配和通配符（*）形式
-
-    Args:
-        branch: 实际的分支名 (例如 'main')
-        pattern: 配置中的分支模式 (例如 'main' 或 '*/feature/*')
-
-    Returns:
-        bool: 是否匹配
-    """
-    if not branch or not pattern:
-        return False
-
-    branch = branch.lower()
-    pattern = pattern.lower()
-
+    # 分支匹配特殊情况：单独的 "*" 匹配所有内容
     if pattern == "*":
         return True
 
     if '*' in pattern or '?' in pattern or '[' in pattern:
-        return fnmatch.fnmatch(branch, pattern)
+        return fnmatch.fnmatch(value, pattern)
 
-    return branch == pattern
+    return value == pattern
 
 async def verify_signature(
         request: Request,
@@ -84,7 +63,7 @@ async def verify_signature(
 
     webhook_secret = None
     for webhook in webhooks:
-        if any(match_repository(repo_name, repo_pattern) for repo_pattern in webhook.REPO):
+        if any(match_pattern(repo_name, repo_pattern) for repo_pattern in webhook.REPO):
             webhook_secret = webhook.SECRET
             break
 
@@ -128,11 +107,11 @@ def find_matching_webhook(
     """
     for webhook in webhooks:
         # 检查仓库名是否匹配配置中的任一模式
-        repo_matches = any(match_repository(repo_name, repo_pattern)
+        repo_matches = any(match_pattern(repo_name, repo_pattern)
                           for repo_pattern in webhook.REPO)
 
         # 检查分支名是否匹配配置中的任一模式
-        branch_matches = any(match_branch(branch, branch_pattern)
+        branch_matches = any(match_pattern(branch, branch_pattern)
                             for branch_pattern in webhook.BRANCH)
 
         # 检查事件类型是否匹配
