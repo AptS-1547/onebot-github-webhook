@@ -1,0 +1,7 @@
+🔄 GitHub Pull Request {{ action }}
+仓库：{{ repo_name }}
+标题：{{ pull_request.title }}
+作者：{{ pull_request.user.login }}
+从：{{ pull_request.head.label }}
+到：{{ pull_request.base.label }}
+链接：{{ pull_request.html_url }}

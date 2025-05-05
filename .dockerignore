@@ -38,7 +38,6 @@ tmp/
 .DS_Store
 
 # 测试
-test/
 tests/
 .pytest_cache/
 .coverage
@@ -46,10 +45,8 @@ htmlcov/
 
 # 文档
 docs/
-*.md
 LICENSE
 
 # 容器相关
-Dockerfile
+docker/
 .dockerignore
-docker-compose.yml
