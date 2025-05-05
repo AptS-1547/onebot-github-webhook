@@ -2,11 +2,16 @@
   OneBot GitHub Webhook
 </h1>
 
-<p align="center">
-  OneBot GitHub Webhook 是一个用于接收 GitHub Webhook 推送事件并通过 OneBot 协议将通知转发到 QQ 群/好友的轻量级服务。它允许开发者和团队实时跟踪 GitHub 仓库活动，提高协作效率和项目透明度。
-</p>
+<div align="center">
+  <img src="./resources/logo.png" alt="Onebot GitHub Webhook Logo">
+</div>
 
 <p align="center">
+
+# OneBot GitHub Webhook
+
+  <p>OneBot GitHub Webhook 是一个用于接收 GitHub Webhook 推送事件并通过 OneBot 协议将通知转发到 QQ 群/好友的轻量级服务。它允许开发者和团队实时跟踪 GitHub 仓库活动，提高协作效率和项目透明度。</p>
+
   <a href="https://www.codefactor.io/repository/github/AptS-1547/onebot-github-webhook/">
     <img src="https://www.codefactor.io/repository/github/AptS-1547/onebot-github-webhook/badge" alt="CodeFactor" />
   </a>
@@ -16,8 +21,10 @@
   </a>
 
   <a href="./LICENSE">
-    <img src="https://img.shields.io/github/license/AptS-1547/onebot-github-webhook" alt="GPL-3.0\"/>
+    <img src="https://img.shields.io/github/license/AptS-1547/onebot-github-webhook" alt="license"/>
   </a>
+
+  <img src="https://img.shields.io/badge/python-3.9+-blue.svg" alt="python">
 </p>
 
 ## 功能特点

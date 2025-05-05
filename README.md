@@ -1,12 +1,13 @@
-<h1 align="center">
-  OneBot GitHub Webhook
-</h1>
+<div align="center">
+  <img src="./docs/src/resources/logo.png" alt="Onebot GitHub Webhook Logo">
+</div>
 
 <p align="center">
-  一个用于接收 GitHub Webhook 并通过 OneBot 协议将推送通知转发到 QQ 群的服务。
-</p>
 
-<p align="center">
+# OneBot GitHub Webhook
+
+_✨ GitHub Webhook 推送消息到 QQ 群 ✨_
+
   <a href="https://www.codefactor.io/repository/github/AptS-1547/onebot-github-webhook/">
     <img src="https://www.codefactor.io/repository/github/AptS-1547/onebot-github-webhook/badge" alt="CodeFactor" />
   </a>
@@ -16,8 +17,10 @@
   </a>
 
   <a href="./LICENSE">
-    <img src="https://img.shields.io/github/license/AptS-1547/onebot-github-webhook" alt="GPL-3.0\"/>
+    <img src="https://img.shields.io/github/license/AptS-1547/onebot-github-webhook" alt="license"/>
   </a>
+
+  <img src="https://img.shields.io/badge/python-3.9+-blue.svg" alt="python">
 </p>
 
 ## 功能特点
