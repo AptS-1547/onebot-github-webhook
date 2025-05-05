@@ -21,10 +21,14 @@ Onebot Github Webhook 配置类
 """
 
 import pathlib
+import logging
 from typing import List, Literal
+from functools import lru_cache
 
 import yaml
-from pydantic import model_validator, BaseModel
+from pydantic import model_validator, BaseModel, ValidationError
+
+logger = logging.getLogger(__name__)
 
 class OnebotTarget(BaseModel):
     """OneBot 目标类型"""
@@ -64,7 +68,6 @@ class Config(BaseModel):
         """从YAML文件加载配置"""
         config_path = pathlib.Path.cwd() / yaml_file
 
-        # 使用默认值初始化
         config = cls()
 
         # 如果配置文件存在，则加载
@@ -85,16 +88,17 @@ class Config(BaseModel):
                 # 使用 model_validate 创建实例
                 try:
                     return cls.model_validate(config_data)
-                except Exception as e:                # pylint: disable=broad-except
-                    print(f"配置验证失败: {e}")
-                    print("使用部分配置和默认值")
+                except yaml.YAMLError as e:
+                    logger.error("YAML配置加载失败: %s", e)
+                    raise
+                except ValidationError as e:
+                    logger.error("Pydantic配置验证失败: %s", e)
+                    for error in e.errors():
+                        logger.error("  %s: %s", error['loc'], error['msg'])
+                    raise
 
-                    # 更新基本配置
-                    for key, value in config_data.items():
-                        if key != "WEBHOOK" and hasattr(config, key):
-                            setattr(config, key, value)
         else:
-            print(f"警告：配置文件 {yaml_file} 不存在，使用默认配置")
+            logger.warning("警告：配置文件 %s 不存在，使用默认配置", config_path)
 
             # 创建默认配置文件
             default_config = {
@@ -125,6 +129,11 @@ class Config(BaseModel):
                           allow_unicode=True
                           )
 
-            print(f"已创建默认配置文件：{config_path}")
+            logger.info("已创建默认配置文件 %s，请根据需要修改", config_path)
 
         return config
+
+@lru_cache()
+def get_settings():
+    """获取应用配置（缓存结果）"""
+    return Config().from_yaml()

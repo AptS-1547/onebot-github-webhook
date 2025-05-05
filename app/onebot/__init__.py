@@ -12,18 +12,28 @@
 # limitations under the License.
 
 """
-OneBot GitHub Webhook utils 模块
-本模块用于处理 GitHub Webhook 事件的匹配逻辑，包括验证签名、查找匹配的 webhook 配置和提取 push 事件数据。
+OneBot GitHub Webhook onebot 模块
+本模块用于处理 OneBot GitHub Webhook 事件的发送逻辑，包括 WebSocket 和 HTTP 客户端的实现。
 作者：AptS:1547
 版本：0.1.0-alpha
 日期：2025-04-17
 本程序遵循 Apache License 2.0 许可证
 """
 
-from .matching import match_pattern
-from .exceptions import InitializationError
+from .onebot import (
+    OneBotWebSocketClient,
+    OneBotHTTPClient,
+    text,
+    init_onebot_client,
+    get_onebot_client,
+    shutdown_onebot_client
+)
 
 __all__ = [
-    "match_pattern",
-    "InitializationError",
+    "OneBotWebSocketClient",
+    "OneBotHTTPClient",
+    "text",
+    "init_onebot_client",
+    "get_onebot_client",
+    "shutdown_onebot_client"
 ]
