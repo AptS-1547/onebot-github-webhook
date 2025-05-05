@@ -3,7 +3,7 @@
 </h1>
 
 <div align="center">
-  <img src="./resources/logo.png" alt="Onebot GitHub Webhook Logo">
+  <img src="./resources/logo.png" alt="OneBot GitHub Webhook Logo">
 </div>
 
 <p align="center">
@@ -21,7 +21,7 @@
   </a>
 
   <a href="./LICENSE">
-    <img src="https://img.shields.io/github/license/AptS-1547/onebot-github-webhook" alt="license"/>
+    <img src="https://img.shields.io/github/license/AptS-1547/onebot-github-webhook" alt="Apache License 2.0" />
   </a>
 
   <img src="https://img.shields.io/badge/python-3.9+-blue.svg" alt="python">

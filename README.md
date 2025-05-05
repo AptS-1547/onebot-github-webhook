@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./docs/src/resources/logo.png" alt="Onebot GitHub Webhook Logo">
+  <img src="./docs/src/resources/logo.png" alt="OneBot GitHub Webhook Logo">
 </div>
 
 <p align="center">
@@ -17,7 +17,7 @@ _✨ GitHub Webhook 推送消息到 QQ 群 ✨_
   </a>
 
   <a href="./LICENSE">
-    <img src="https://img.shields.io/github/license/AptS-1547/onebot-github-webhook" alt="license"/>
+    <img src="https://img.shields.io/github/license/AptS-1547/onebot-github-webhook" alt="Apache License 2.0" />
   </a>
 
   <img src="https://img.shields.io/badge/python-3.9+-blue.svg" alt="python">
@@ -350,4 +350,4 @@ A: 本程序暂时不支持推送到多个 QQ 机器人
 
 ## 许可证
 
-本项目采用 GPL-3.0 许可证。
+本项目采用 [Apache License 2.0](LICENSE) 许可证。
