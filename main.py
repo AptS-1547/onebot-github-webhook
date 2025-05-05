@@ -21,8 +21,10 @@ OneBot GitHub Webhook 入口文件
 """
 
 import logging
+import asyncio
 from contextlib import asynccontextmanager
 
+import aiohttp
 from fastapi import FastAPI
 
 from app.api import api_router
