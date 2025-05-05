@@ -8,7 +8,6 @@ LABEL description="A simple webhook server for GitHub to send events to a OneBot
 LABEL homepage="https://onebot-github-webhook.docs.ecaps.top/"
 LABEL repository="https://github.com/AptS-1547/onebot-github-webhook"
 LABEL license="Apache-2.0"
-LABEL license_url="http://www.apache.org/licenses/LICENSE-2.0"
 
 LABEL org.opencontainers.image.source="https://github.com/AptS-1547/onebot-github-webhook"
 LABEL org.opencontainers.image.description="A simple webhook server for GitHub to send events to a OneBot (CQHTTP) bot."
