@@ -174,10 +174,13 @@ class OneBotWebSocketManager:                # pylint: disable=too-many-instance
 
                 except asyncio.CancelledError:
                     logger.info("WebSocket 接收任务被取消")
+                except aiohttp.ClientError as e:
+                    logger.error("处理 WebSocket 消息时出错: %s", str(e))
+                    if self.ws:
+                        await self.ws.close()
                     break
-
                 except Exception as e:      # pylint: disable=broad-except
-                    logger.error("处理 WebSocket 消息时出错: %s", e)
+                    logger.error("处理 WebSocket 消息时出错: %s", str(e))
                     break
 
         except asyncio.CancelledError:
@@ -244,9 +247,22 @@ class OneBotWebSocketManager:                # pylint: disable=too-many-instance
                     "echo": echo_id
                 }
 
+        except asyncio.TimeoutError:
+            self.response_futures.pop(echo_id, None)
+            logger.error("请求超时：%s", echo_id)
+            return {
+                "status": "error",
+                "retcode": -1,
+                "message": "请求超时",
+                "echo": echo_id
+            }
+        except aiohttp.ClientError as e:
+            self.response_futures.pop(echo_id, None)
+            logger.error("发送请求失败: %s", str(e))
+            raise
         except Exception as e:
             self.response_futures.pop(echo_id, None)
-            logger.error("发送请求失败: %s", e)
+            logger.error("发送请求失败: %s", str(e))
             raise
 
 class OnebotClient:      # pylint: disable=too-few-public-methods

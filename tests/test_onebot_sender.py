@@ -141,7 +141,7 @@ class TestOneBotClients:
     """测试消息发送客户端"""
     
     @pytest.mark.asyncio
-    @patch('app.core.onebot.OneBotWebSocketManager.send_request')
+    @patch('app.onebot.onebot.OneBotWebSocketManager.send_request')
     async def test_websocket_client_send_message(self, mock_send_request):
         """测试 WebSocket 客户端发送消息"""
         # 设置mock返回值
@@ -173,7 +173,7 @@ class TestOneBotClients:
         assert result["data"]["message_id"] == 123
 
     @pytest.mark.asyncio
-    @patch('app.core.onebot.OneBotWebSocketManager.send_request')
+    @patch('app.onebot.onebot.OneBotWebSocketManager.send_request')
     async def test_websocket_client_send_rich_message(self, mock_send_request):
         """测试 WebSocket 客户端发送富文本消息"""
         # 设置mock返回值

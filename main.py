@@ -20,7 +20,6 @@ OneBot GitHub Webhook 入口文件
 本程序遵循 Apache License 2.0 许可证
 """
 
-import sys
 import logging
 from contextlib import asynccontextmanager
 
@@ -29,6 +28,7 @@ from fastapi import FastAPI
 from app.api import api_router
 from app.models import get_settings
 from app.onebot import init_onebot_client, shutdown_onebot_client
+from app.utils.exceptions import InitializationError
 
 
 logging.basicConfig(level=logging.INFO)
@@ -51,7 +51,7 @@ async def lifespan(_: FastAPI):
         )
     except Exception as e:  # pylint: disable=broad-except
         logger.error("初始化 OneBot 客户端失败: %s", e)
-        sys.exit(1)
+        raise InitializationError("OneBot client initialization failed") from e
 
     yield
 

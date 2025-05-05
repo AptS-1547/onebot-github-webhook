@@ -89,7 +89,7 @@ class Config(BaseModel):
                 try:
                     return cls.model_validate(config_data)
                 except Exception as e:                # pylint: disable=broad-except
-                    logger.warning("配置验证失败: %s", str(e))
+                    logger.warning("配置验证失败: %s, Exception: %s", str(e), type(e).__name__)
                     logger.warning("使用默认配置")
 
                     # 更新基本配置
