@@ -3,10 +3,22 @@ name: Docker Image CI
 on:
   push:
     branches: [ "master" ]
+    paths:
+      - 'Dockerfile'
+      - '.github/workflows/docker-image.yml'
+      - 'main.py'
+      - 'requirements.txt'
+      - 'app/**'
     tags:
       - 'v*'
   pull_request:
     branches: [ "master" ]
+    paths:
+      - 'Dockerfile'
+      - '.github/workflows/docker-image.yml'
+      - 'main.py'
+      - 'requirements.txt'
+      - 'app/**'
 
 permissions:
   contents: read
