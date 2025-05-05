@@ -21,10 +21,13 @@ Onebot Github Webhook 配置类
 """
 
 import pathlib
+import logging
 from typing import List, Literal
 
 import yaml
 from pydantic import model_validator, BaseModel
+
+logger = logging.getLogger(__name__)
 
 class OnebotTarget(BaseModel):
     """OneBot 目标类型"""
@@ -86,15 +89,15 @@ class Config(BaseModel):
                 try:
                     return cls.model_validate(config_data)
                 except Exception as e:                # pylint: disable=broad-except
-                    print(f"配置验证失败: {e}")
-                    print("使用部分配置和默认值")
+                    logger.warning("配置验证失败: %s", str(e))
+                    logger.warning("使用默认配置")
 
                     # 更新基本配置
                     for key, value in config_data.items():
                         if key != "WEBHOOK" and hasattr(config, key):
                             setattr(config, key, value)
         else:
-            print(f"警告：配置文件 {yaml_file} 不存在，使用默认配置")
+            logger.warning("警告：配置文件 %s 不存在，使用默认配置", config_path)
 
             # 创建默认配置文件
             default_config = {
@@ -125,6 +128,6 @@ class Config(BaseModel):
                           allow_unicode=True
                           )
 
-            print(f"已创建默认配置文件：{config_path}")
+            logger.info("已创建默认配置文件 %s，请根据需要修改", config_path)
 
         return config

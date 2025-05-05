@@ -14,7 +14,7 @@ RUN mkdir -p /app/templates \
 
 COPY --chown=appuser:appuser . .
 
-VOLUME [ "/app/config" ]
+VOLUME [ "/app/templates" ]
 
 USER appuser
 
