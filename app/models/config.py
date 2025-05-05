@@ -131,3 +131,5 @@ class Config(BaseModel):
             logger.info("已创建默认配置文件 %s，请根据需要修改", config_path)
 
         return config
+
+config = Config().from_yaml()

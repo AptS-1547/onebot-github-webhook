@@ -12,15 +12,22 @@
 # limitations under the License.
 
 """
-OneBot GitHub Webhook models 模块
-本模块用于定义 OneBot GitHub Webhook 的数据模型，包括 Webhook 配置和 OneBot 目标类型。
+Onebot GitHub Webhook API 模块
+本模块包含应用的所有 API 路由
+作者：AptS:1547
 版本：0.1.0-alpha
 日期：2025-04-17
 本程序遵循 Apache License 2.0 许可证
 """
 
-from .config import config
+from fastapi import APIRouter
 
-__all__ = [
-    "config",
-]
+from .github_webhook import router as github_webhook_router
+
+# 主路由
+api_router = APIRouter()
+
+# 注册子路由
+api_router.include_router(github_webhook_router, prefix="/github-webhook", tags=["github"])
+
+__all__ = ["api_router"]

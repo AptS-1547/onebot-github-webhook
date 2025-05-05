@@ -10,11 +10,11 @@ from unittest.mock import MagicMock, AsyncMock, patch, call
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # 导入测试对象
-from app.core.onebot import (
+from app.onebot.onebot import (
     OneBotWebSocketManager, OneBotWebSocketClient, 
     OneBotHTTPClient, text
 )
-from app.core.onebot import WSConnectionException
+from app.onebot.onebot import WSConnectionException
 
 # 全局测试变量
 WS_URL = "wss://api.esaps.net/api/napcat/ws"

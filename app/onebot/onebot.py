@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 class OneBotException(Exception):
     """OneBot 基础异常类"""
-    
+
 class WSConnectionException(OneBotException):
     """WebSocket 连接异常"""
 
@@ -143,9 +143,9 @@ class OneBotWebSocketManager:                # pylint: disable=too-many-instance
 
             logger.info("WebSocket 连接已关闭")
 
-    async def _message_receiver(self):
+    async def _message_receiver(self):           # pylint: disable=too-many-branches, too-many-statements
         """接收并处理 WebSocket 消息的异步任务"""
-        try:
+        try:                                     # pylint: disable=too-many-nested-blocks
             while self.running and self.ws:
                 try:
                     response = await self.ws.receive()
@@ -249,7 +249,7 @@ class OneBotWebSocketManager:                # pylint: disable=too-many-instance
             logger.error("发送请求失败: %s", e)
             raise
 
-class OnebotClient:
+class OnebotClient:      # pylint: disable=too-few-public-methods
     """OneBot 客户端基类"""
     def __init__(self, onebot_url: str, access_token: str = ""):
         """
@@ -340,7 +340,7 @@ class OneBotWebSocketClient(OnebotClient):
             return False
         return True
 
-class OneBotHTTPClient(OnebotClient):
+class OneBotHTTPClient(OnebotClient):      # pylint: disable=too-few-public-methods
     """基于 HTTP 的 OneBot V11 客户端"""
 
     async def send_message(
@@ -388,7 +388,7 @@ class OneBotHTTPClient(OnebotClient):
                             "retcode": -1,
                             "message": f"HTTP 错误: {response.status}"
                         }
-                    
+
                     data = await response.json()
                     return data
         except aiohttp.ClientError as e:
@@ -402,3 +402,73 @@ class OneBotHTTPClient(OnebotClient):
 def text(content: str) -> Dict[str, Any]:
     """纯文本消息"""
     return {"type": "text", "data": {"text": content}}
+
+# 全局客户端实例
+_ONEBOT_CLIENT = None
+
+async def init_onebot_client(client_type: str, url: str, access_token: str = "", max_retries: int = 5, retry_delay: float = 2.0):
+    """
+    初始化全局 OneBot 客户端
+    
+    参数:
+        client_type: 客户端类型，"ws" 或 "http"
+        url: OneBot 实现的 URL 地址
+        access_token: 鉴权 token，如果有的话
+        max_retries: 最大重试次数 (仅用于 WebSocket)
+        retry_delay: 重试间隔（秒）(仅用于 WebSocket)
+    
+    返回:
+        已初始化的客户端实例
+    """
+    global _ONEBOT_CLIENT  # pylint: disable=global-statement
+
+    if _ONEBOT_CLIENT is not None:
+        logger.warning("OneBot 客户端已经初始化，将返回现有实例")
+        return _ONEBOT_CLIENT
+
+    if client_type == "ws":
+        _ONEBOT_CLIENT = OneBotWebSocketClient(url, access_token)
+        # 启动 WebSocket 连接
+        logger.info("正在初始化 WebSocket 连接...")
+        try:
+            await _ONEBOT_CLIENT.manager.start(max_retries=max_retries, retry_delay=retry_delay)
+            logger.info("WebSocket 连接已成功建立")
+        except Exception as e:  # pylint: disable=broad-except
+            logger.error("建立 WebSocket 连接失败: %s", e)
+            raise
+    elif client_type == "http":
+        _ONEBOT_CLIENT = OneBotHTTPClient(url, access_token)
+    else:
+        raise ValueError(f"不支持的客户端类型: {client_type}")
+
+    return _ONEBOT_CLIENT
+
+def get_onebot_client():
+    """
+    获取全局 OneBot 客户端实例
+    如果客户端尚未初始化，会抛出异常
+    
+    返回:
+        OneBot 客户端实例
+    """
+    if _ONEBOT_CLIENT is None:
+        raise RuntimeError("OneBot 客户端尚未初始化，请先调用 init_onebot_client")
+
+    return _ONEBOT_CLIENT
+
+async def shutdown_onebot_client():
+    """关闭 OneBot 客户端连接"""
+    global _ONEBOT_CLIENT  # pylint: disable=global-statement
+
+    if _ONEBOT_CLIENT is None:
+        return
+
+    if isinstance(_ONEBOT_CLIENT, OneBotWebSocketClient):
+        logger.info("正在关闭 WebSocket 连接...")
+        try:
+            await _ONEBOT_CLIENT.manager.stop()
+            logger.info("WebSocket 连接已成功关闭")
+        except Exception as e:  # pylint: disable=broad-except
+            logger.error("关闭 WebSocket 连接时出错: %s", e)
+
+    _ONEBOT_CLIENT = None
