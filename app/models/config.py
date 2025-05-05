@@ -23,6 +23,7 @@ Onebot Github Webhook 配置类
 import pathlib
 import logging
 from typing import List, Literal
+from functools import lru_cache
 
 import yaml
 from pydantic import model_validator, BaseModel
@@ -67,7 +68,6 @@ class Config(BaseModel):
         """从YAML文件加载配置"""
         config_path = pathlib.Path.cwd() / yaml_file
 
-        # 使用默认值初始化
         config = cls()
 
         # 如果配置文件存在，则加载
@@ -132,4 +132,7 @@ class Config(BaseModel):
 
         return config
 
-config = Config().from_yaml()
+@lru_cache()
+def get_settings():
+    """获取应用配置（缓存结果）"""
+    return Config().from_yaml()

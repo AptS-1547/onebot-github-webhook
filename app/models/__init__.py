@@ -19,8 +19,8 @@ OneBot GitHub Webhook models 模块
 本程序遵循 Apache License 2.0 许可证
 """
 
-from .config import config
+from .config import get_settings
 
 __all__ = [
-    "config",
+    "get_settings",
 ]

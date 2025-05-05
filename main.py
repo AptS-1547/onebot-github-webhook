@@ -27,12 +27,14 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.api import api_router
-from app.models import config
+from app.models import get_settings
 from app.onebot import init_onebot_client, shutdown_onebot_client
 
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+config = get_settings()
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):

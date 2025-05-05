@@ -406,7 +406,13 @@ def text(content: str) -> Dict[str, Any]:
 # 全局客户端实例
 _ONEBOT_CLIENT = None
 
-async def init_onebot_client(client_type: str, url: str, access_token: str = "", max_retries: int = 5, retry_delay: float = 2.0):
+async def init_onebot_client(
+        client_type: str,
+        url: str,
+        access_token: str = "",
+        max_retries: int = 5,
+        retry_delay: float = 2.0
+    ) -> OnebotClient:
     """
     初始化全局 OneBot 客户端
     

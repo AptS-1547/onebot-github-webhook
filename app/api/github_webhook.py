@@ -25,10 +25,12 @@ from fastapi import APIRouter, Request, HTTPException
 
 from app.core import GitHubWebhookHandler
 from app.onebot import text, get_onebot_client
-from app.models.config import config
+from app.models.config import get_settings
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+config = get_settings()
 
 @router.post("")
 async def github_webhook(
