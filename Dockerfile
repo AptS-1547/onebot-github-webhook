@@ -14,6 +14,8 @@ RUN mkdir -p /app/templates \
 
 COPY --chown=appuser:appuser . .
 
+VOLUME [ "/app/config" ]
+
 USER appuser
 
 EXPOSE 8000
