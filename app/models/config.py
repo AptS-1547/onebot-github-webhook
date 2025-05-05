@@ -26,7 +26,7 @@ from typing import List, Literal
 from functools import lru_cache
 
 import yaml
-from pydantic import model_validator, BaseModel
+from pydantic import model_validator, BaseModel, ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -88,14 +88,13 @@ class Config(BaseModel):
                 # 使用 model_validate 创建实例
                 try:
                     return cls.model_validate(config_data)
-                except Exception as e:                # pylint: disable=broad-except
-                    logger.warning("配置验证失败: %s, Exception: %s", str(e), type(e).__name__)
-                    logger.warning("使用默认配置")
+                except yaml.YAMLError as e:
+                    logger.error("YAML配置加载失败: %s", e)
+                    raise
+                except ValidationError as e:
+                    logger.error("Pydantic配置验证失败: %s", e)
+                    raise
 
-                    # 更新基本配置
-                    for key, value in config_data.items():
-                        if key != "WEBHOOK" and hasattr(config, key):
-                            setattr(config, key, value)
         else:
             logger.warning("警告：配置文件 %s 不存在，使用默认配置", config_path)
 
