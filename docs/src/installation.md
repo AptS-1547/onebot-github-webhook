@@ -19,6 +19,8 @@ source .venv/bin/activate  # Linux/Mac
 
 ```bash
 pip install -r requirements.txt
+# 或者使用 Poetry
+# poetry install
 ```
 
 4. 配置文件设置：
@@ -27,7 +29,7 @@ pip install -r requirements.txt
 或者复制示例配置文件：
 
 ```bash
-cp config.yaml.example config.yaml
+cp config/config.example.yaml config.yaml
 ```
 
 ## 配置说明
@@ -42,12 +44,15 @@ ONEBOT_ACCESS_TOKEN: "your_token"  # OneBot 访问令牌
 
 GITHUB_WEBHOOK:
   - NAME: "github"  # webhook 名称
-    REPO:  # 监听的仓库列表，支持用户名/* 匹配用户所有仓库
+    REPO:  # 监听的仓库列表，支持通配符匹配
       - "username/repo"
       - "username/*"
-    BRANCH:  # 监听的分支列表
+      - "*/*-api"
+    BRANCH:  # 监听的分支列表，支持通配符匹配
       - "main"
       - "develop"
+      - "feature/*"
+      - "release-*"
     SECRET: "your_secret"  # GitHub Webhook 密钥
     EVENTS:  # 监听的事件类型
       - "push"
@@ -63,13 +68,13 @@ GITHUB_WEBHOOK:
 ## 运行
 
 ```bash
-uvicorn app:app --host 0.0.0.0 --port 8000
+uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
 或者直接执行：
 
 ```bash
-python app.py
+python main.py
 ```
 
 ## GitHub Webhook 设置

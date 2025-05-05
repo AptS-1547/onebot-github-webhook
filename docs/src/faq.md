@@ -25,4 +25,4 @@ A: 本程序暂时不支持推送到多个 QQ 机器人
 
 ## 许可证
 
-本项目采用 [Apache License 2.0](LICENSE) 许可证。
+本项目采用 Apache License 2.0 许可证。

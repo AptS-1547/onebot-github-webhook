@@ -10,6 +10,13 @@ docker run -d \
   e1saps/onebot-github-webhook:latest
 ```
 
+或使用 Docker Compose:
+
+```bash
+cd docker
+docker-compose up -d
+```
+
 ### Systemd 服务
 
 创建 `/etc/systemd/system/onebot-github-webhook.service`:
@@ -22,7 +29,7 @@ After=network.target
 [Service]
 User=www-data
 WorkingDirectory=/opt/onebot-github-webhook
-ExecStart=/opt/onebot-github-webhook/.venv/bin/python -m uvicorn app:app --host 0.0.0.0 --port 8000
+ExecStart=/opt/onebot-github-webhook/.venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8000
 Restart=on-failure
 RestartSec=5s
 

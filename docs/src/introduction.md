@@ -1,7 +1,3 @@
-<h1 align="center">
-  OneBot GitHub Webhook
-</h1>
-
 <div align="center">
   <img src="./resources/logo.png" alt="OneBot GitHub Webhook Logo">
 </div>
