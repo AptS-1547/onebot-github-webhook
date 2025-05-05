@@ -93,6 +93,8 @@ class Config(BaseModel):
                     raise
                 except ValidationError as e:
                     logger.error("Pydantic配置验证失败: %s", e)
+                    for error in e.errors():
+                        logger.error("  %s: %s", error['loc'], error['msg'])
                     raise
 
         else:
