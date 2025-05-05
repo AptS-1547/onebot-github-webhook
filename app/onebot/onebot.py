@@ -321,13 +321,7 @@ class OneBotWebSocketClient(OnebotClient):
         message: Union[str, List[Dict[str, Any]]],
         auto_escape: bool = False
     ) -> Dict[str, Any]:
-        """发送消息"""
-        if not self._validate_message_type(onebot_type):
-            return {
-                "status": "error",
-                "retcode": -1,
-                "message": f"不支持的消息类型: {onebot_type}"
-            }
+        raise ValueError(f"不支持的消息类型: {onebot_type}")
 
         request = {
             "action": "send_msg",
