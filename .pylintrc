@@ -1,0 +1,6 @@
+[MASTER]
+ignore=tests
+ignore-patterns=test_.*?.py
+
+[FORMAT]
+max-line-length=120

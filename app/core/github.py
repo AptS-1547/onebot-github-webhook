@@ -23,40 +23,13 @@ GitHub Webhook 处理模块
 import hmac
 import hashlib
 import logging
-import fnmatch
 from typing import Optional, Dict, Any, List
 
 from fastapi import Request, HTTPException, Header
 
+from app.utils.matching import match_pattern
+
 logger = logging.getLogger(__name__)
-
-def match_pattern(value: str, pattern: str) -> bool:
-    """
-    检查字符串是否匹配配置中的模式
-    支持大小写不敏感匹配和通配符模式
-
-    Args:
-        value: 要匹配的字符串 (例如 'user/repo' 或 'main')
-        pattern: 配置中的模式 (例如 'user/*', 'feature/*')
-        treat_star_as_all: 是否将单独的 "*" 视为匹配所有内容（用于分支匹配）
-
-    Returns:
-        bool: 是否匹配
-    """
-    if not value or not pattern:
-        return False
-
-    value = value.lower()
-    pattern = pattern.lower()
-
-    # 分支匹配特殊情况：单独的 "*" 匹配所有内容
-    if pattern == "*":
-        return True
-
-    if '*' in pattern or '?' in pattern or '[' in pattern:
-        return fnmatch.fnmatch(value, pattern)
-
-    return value == pattern
 
 async def verify_signature(
         request: Request,
