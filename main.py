@@ -49,6 +49,12 @@ async def lifespan(_: FastAPI):
             url=config.ONEBOT_URL,
             access_token=config.ONEBOT_ACCESS_TOKEN
         )
+    except aiohttp.ClientError as e:
+        logger.error("初始化 OneBot 客户端失败: %s", e)
+        raise InitializationError("OneBot client initialization failed") from e
+    except asyncio.TimeoutError as e:
+        logger.error("初始化 OneBot 客户端超时: %s", e)
+        raise InitializationError("OneBot client initialization timed out") from e
     except Exception as e:  # pylint: disable=broad-except
         logger.error("初始化 OneBot 客户端失败: %s", e)
         raise InitializationError("OneBot client initialization failed") from e
