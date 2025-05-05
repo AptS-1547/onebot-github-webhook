@@ -1,0 +1,18 @@
+OneBot GitHub Webhook
+Copyright 2025 AptS-1547
+
+This product includes software developed by AptS-1547 (https://github.com/AptS-1547).
+
+This software uses the following third-party libraries that are distributed
+under their own licenses:
+
+- FastAPI (https://fastapi.tiangolo.com/) - MIT License
+- Pydantic (https://pydantic-docs.helpmanual.io/) - MIT License
+- Pydantic-settings (https://github.com/pydantic/pydantic-settings) - MIT License
+- aiohttp (https://docs.aiohttp.org/) - Apache License 2.0
+- PyYAML (https://pyyaml.org/) - MIT License
+- Uvicorn (https://www.uvicorn.org/) - BSD License
+- fnmatch (Python Standard Library) - Python Software Foundation License
+
+All dependencies and their transitive dependencies are subject to their own licenses.
+Please see each project for full licensing details.
