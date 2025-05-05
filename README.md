@@ -82,6 +82,8 @@ source .venv/bin/activate  # Linux/Mac
 
 ```bash
 pip install -r requirements.txt
+# 或者使用 Poetry
+# poetry install
 ```
 
 4. 配置文件设置：
@@ -90,7 +92,7 @@ pip install -r requirements.txt
 或者复制示例配置文件：
 
 ```bash
-cp config.yaml.example config.yaml
+cp config/config.example.yaml config.yaml
 ```
 
 ## 配置说明
@@ -129,13 +131,13 @@ GITHUB_WEBHOOK:
 ## 运行
 
 ```bash
-uvicorn app:app --host 0.0.0.0 --port 8000
+uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
 或者直接执行：
 
 ```bash
-python app.py
+python main.py
 ```
 
 ## GitHub Webhook 设置
@@ -149,144 +151,51 @@ python app.py
 
 ## 开发路线图
 
-### 1. GitHub API 轮询（计划中）
-
-对于无法使用 webhook 的场景（如私有仓库或受限环境），我们计划实现基于 GitHub API 的轮询机制。
-
-#### 设计概要
-
-- **配置方式**：
-
-```yaml
-GITHUB_API_POLLING:
-  - NAME: "polling-example"
-    REPO:
-      - "username/repo"
-    BRANCH:
-      - "main"
-    INTERVAL: 300  # 轮询间隔（秒）
-    EVENTS:
-      - "push"
-      - "pull_request"
-    TOKEN: "github_personal_access_token"  # GitHub 个人访问令牌
-    ONEBOT:
-      - type: "group"
-        id: 123456789
-```
-
-- **功能**：
-  - 定时检查仓库变更
-  - 对比上次轮询结果，只通知新变更
-  - 支持提交、PR、Issue 等多种数据类型轮询
-  - 优化请求频率，避免触发 GitHub API 限流
-
-- **实现计划**：
-  - 使用 `APScheduler` 实现定时任务
-  - 使用 `aiohttp` 实现异步 HTTP 请求
-  - 使用本地文件存储上次轮询状态 ~~（轻量化的玩意不可能给你上数据库 or Redis）~~
-  - 封装 GitHub API 客户端，处理认证和错误
-
-### 2. 自定义模板系统（计划中）
-
-允许用户自定义各类事件的通知消息格式，提供更灵活的展示方式。
-
-#### 设计概要
-
-- **模板存储**：
-  - 模板文件存储在 `templates/` 目录下
-  - 按照事件类型命名，如 `templates/push.txt`、`templates/issues.txt` 等
-  - 也可以创建自定义命名的模板文件用于不同场景
-
-- **配置方式**：
-
-  ```yaml
-  GITHUB_WEBHOOK:
-    - NAME: "github"
-      REPO:
-        - "username/repo"
-      BRANCH:
-        - "main"
-      SECRET: "your_secret"
-      EVENTS:
-        - "push"
-        - "issues"
-      TEMPLATES:  # 为不同事件类型指定自定义模板
-        push: "custom_push.txt"  # 使用自定义推送模板
-        issues: "default"  # 使用默认 issues 模板
-      ONEBOT:
-        - type: "group"
-          id: 123456789
-  ```
-
-- **模板示例** (`templates/push.txt`):
-
-  ```
-  📢 GitHub 推送通知
-  仓库：{{ repo_name }}
-  分支：{{ branch }}
-  推送者：{{ pusher }}
-  提交数量：{{ commit_count }}
-  {% for commit in commits %}
-  [{{ loop.index }}] {{ commit.id[:7] }} by {{ commit.author.name }}
-      {{ commit.message.split('\n')[0] }}
-  {% endfor %}
-  ```
-
-- **模板示例** (`templates/issues.txt`):
-
-  ```
-  📋 Issue {{ action }}
-  仓库：{{ repo_name }}
-  标题：{{ issue.title }}
-  作者：{{ issue.user.login }}
-  链接：{{ issue.html_url }}
-  ```
-
-- **功能**：
-  - 基于 Jinja2 模板引擎
-  - 支持条件语句和循环
-  - 每个 Webhook 可以指定不同的模板集合
-  - 提供默认模板，无需配置即可使用
-  - 模板变量自动文档化（将提供变量参考）
-
-- **实现计划**：
-  - 引入 Jinja2 依赖
-  - 实现模板目录扫描和加载机制
-  - 开发模板缓存以提高性能
-  - 提供模板变量参考文档
-  - 添加模板验证功能，避免语法错误
-
-## API 参考
-
-### Webhook 接口
-
-- **路径**: `/github-webhook`
-- **方法**: POST
-- **请求头**:
-  - `Content-Type`: application/json
-  - `X-GitHub-Event`: 事件类型
-  - `X-Hub-Signature-256`: SHA-256 HMAC 签名
-
-- **响应**:
-
-  ```json
-  {
-    "status": "success|ignored",
-    "message": "处理信息"
-  }
-  ```
+详细的开发路线图请参考 开发路线图文档。
 
 ## 项目结构
 
-- app.py: 主应用入口和 Web 服务器
-- hooks/github_webhook.py: GitHub Webhook 处理逻辑
-- send_message.py: OneBot 消息发送客户端
-- settings.py: 配置加载和验证
-- requirements.txt: 项目依赖
+```
+onebot-github-webhook/
+│
+├── app/                      # 应用程序核心模块
+│   ├── api/                  # API 接口
+│   ├── core/                 # 核心功能
+│   │   ├── github.py         # GitHub Webhook 处理逻辑
+│   │   └── onebot.py         # OneBot 消息发送客户端
+│   ├── models/               # 数据模型
+│   │   └── config.py         # 配置模型
+│   └── utils/                # 工具函数
+│       └── matching.py       # 匹配规则工具
+│
+├── config/                   # 配置文件目录
+│   ├── config.example.yaml   # 示例配置文件
+│   └── templates/            # 消息模板目录
+│       ├── push/             # 推送事件模板
+│       ├── issues/           # Issue 事件模板
+│       └── pull_request/     # Pull Request 事件模板
+│
+├── docs/                     # 文档目录
+│   └── src/                  # mdBook 文档源
+│
+├── tests/                    # 测试目录
+│   ├── test_matching.py      # 匹配规则测试
+│   ├── test_onebot_sender.py # OneBot 发送器测试
+│   └── test_webhook_signature.py # Webhook 签名验证测试
+│
+├── docker/                   # Docker 相关文件
+│   └── docker-compose.yml    # Docker Compose 配置文件
+│
+├── main.py                   # 应用程序入口点
+├── Dockerfile                # Docker 构建文件
+├── pyproject.toml            # Python 项目配置
+├── poetry.lock               # Poetry 依赖锁定文件
+└── README.md                 # 项目说明文档
+```
 
 ## 部署建议
 
-### Docker 部署（计划支持）
+### Docker 部署
 
 ```bash
 docker run -d \
@@ -294,6 +203,13 @@ docker run -d \
   -p 8000:8000 \
   -v $(pwd)/config.yaml:/app/config.yaml \
   e1saps/onebot-github-webhook:latest
+```
+
+或使用 Docker Compose:
+
+```bash
+cd docker
+docker-compose up -d
 ```
 
 ### Systemd 服务
@@ -308,7 +224,7 @@ After=network.target
 [Service]
 User=www-data
 WorkingDirectory=/opt/onebot-github-webhook
-ExecStart=/opt/onebot-github-webhook/.venv/bin/python -m uvicorn app:app --host 0.0.0.0 --port 8000
+ExecStart=/opt/onebot-github-webhook/.venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8000
 Restart=on-failure
 RestartSec=5s
 
@@ -350,4 +266,4 @@ A: 本程序暂时不支持推送到多个 QQ 机器人
 
 ## 许可证
 
-本项目采用 [Apache License 2.0](LICENSE) 许可证。
+本项目采用 Apache License 2.0 许可证。
