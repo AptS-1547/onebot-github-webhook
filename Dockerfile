@@ -1,5 +1,19 @@
 FROM python:3.12.9-alpine3.21
 
+ARG VERSION=1.0.0
+
+LABEL maintainer="AptS-1547 <apts-1547@esaps.net>" \
+      version="${VERSION}" \
+      description="A simple webhook server for GitHub to send events to a OneBot (CQHTTP) bot." \
+      homepage="https://onebot-github-webhook.docs.ecaps.top/" \
+      repository="https://github.com/AptS-1547/onebot-github-webhook" \
+      license="Apache-2.0" \
+      license_url="http://www.apache.org/licenses/LICENSE-2.0"
+
+LABEL org.opencontainers.image.source="https://github.com/AptS-1547/onebot-github-webhook" \
+      org.opencontainers.image.description="A simple webhook server for GitHub to send events to a OneBot (CQHTTP) bot." \
+      org.opencontainers.image.licenses="Apache-2.0"
+
 WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
