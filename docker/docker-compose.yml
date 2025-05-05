@@ -1,0 +1,9 @@
+services:
+  python-github-webhook:
+    container_name: python-github-webhook
+    image: e1saps/onebot-github-webhook:latest
+    restart: unless-stopped
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+    ports:
+      - "8000:8000"

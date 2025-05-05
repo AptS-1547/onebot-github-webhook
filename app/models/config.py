@@ -40,7 +40,7 @@ class WebhookConfig(BaseModel):
     EVENTS: List[str]
     ONEBOT: List[OnebotTarget]
 
-class Settings(BaseModel):
+class Config(BaseModel):
     """配置类"""
 
     ENV: str = "production"
@@ -50,7 +50,7 @@ class Settings(BaseModel):
     GITHUB_WEBHOOK: List[WebhookConfig] = []
 
     @model_validator(mode='after')
-    def validate_onebot_url(self) -> 'Settings':
+    def validate_onebot_url(self) -> 'Config':
         """验证 ONEBOT_URL 的格式是否与 ONEBOT_TYPE 匹配"""
         if self.ONEBOT_URL:
             if self.ONEBOT_TYPE == "ws" and not (self.ONEBOT_URL.startswith("ws://") or self.ONEBOT_URL.startswith("wss://")):          # pylint: disable=line-too-long
@@ -62,7 +62,7 @@ class Settings(BaseModel):
     @classmethod
     def from_yaml(cls, yaml_file: str = "config.yaml"):
         """从YAML文件加载配置"""
-        config_path = pathlib.Path(__file__).parent / yaml_file
+        config_path = pathlib.Path.cwd() / yaml_file
 
         # 使用默认值初始化
         settings = cls()

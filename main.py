@@ -23,16 +23,16 @@ OneBot GitHub Webhook 入口文件
 import logging
 from fastapi import FastAPI, Request, HTTPException
 
-from settings import Settings
-from send_message import send_github_notification
-from hooks.github_webhook import verify_signature, find_matching_webhook, extract_push_data
+from app.models.config import Config
+from app.core.onebot import send_github_notification
+from app.core.github import verify_signature, find_matching_webhook, extract_push_data
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
-settings = Settings().from_yaml()
+config = Config().from_yaml()
 
 @app.post("/github-webhook")
 async def github_webhook(request: Request):      # pylint: disable=too-many-return-statements
@@ -51,7 +51,7 @@ async def github_webhook(request: Request):      # pylint: disable=too-many-retu
     try:
         await verify_signature(
             request,
-            settings.GITHUB_WEBHOOK,
+            config.GITHUB_WEBHOOK,
             request.headers.get("X-Hub-Signature-256")
         )
     except HTTPException as e:
@@ -70,7 +70,7 @@ async def github_webhook(request: Request):      # pylint: disable=too-many-retu
         repo_name,
         branch,
         event_type,
-        settings.GITHUB_WEBHOOK
+        config.GITHUB_WEBHOOK
     )
 
     if not matched_webhook:
@@ -91,9 +91,9 @@ async def github_webhook(request: Request):      # pylint: disable=too-many-retu
         for target in matched_webhook.ONEBOT:
             logger.info("正在发送消息到 QQ %s %s", target.type, target.id)
             await send_github_notification(
-                onebot_type=settings.ONEBOT_TYPE,
-                onebot_url=settings.ONEBOT_URL,
-                access_token=settings.ONEBOT_ACCESS_TOKEN,
+                onebot_type=config.ONEBOT_TYPE,
+                onebot_url=config.ONEBOT_URL,
+                access_token=config.ONEBOT_ACCESS_TOKEN,
                 repo_name=push_data["repo_name"],
                 branch=push_data["branch"],
                 pusher=push_data["pusher"],
