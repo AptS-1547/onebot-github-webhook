@@ -65,7 +65,7 @@ class Config(BaseModel):
         config_path = pathlib.Path.cwd() / yaml_file
 
         # 使用默认值初始化
-        settings = cls()
+        config = cls()
 
         # 如果配置文件存在，则加载
         if config_path.exists():         # pylint: disable=too-many-nested-blocks
@@ -91,8 +91,8 @@ class Config(BaseModel):
 
                     # 更新基本配置
                     for key, value in config_data.items():
-                        if key != "WEBHOOK" and hasattr(settings, key):
-                            setattr(settings, key, value)
+                        if key != "WEBHOOK" and hasattr(config, key):
+                            setattr(config, key, value)
         else:
             print(f"警告：配置文件 {yaml_file} 不存在，使用默认配置")
 
@@ -127,4 +127,4 @@ class Config(BaseModel):
 
             print(f"已创建默认配置文件：{config_path}")
 
-        return settings
+        return config
