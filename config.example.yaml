@@ -1,6 +1,6 @@
 ENV: production
 ONEBOT_URL: ''
-ONEBOT_TYPE: 'ws'
+ONEBOT_PORTOL_TYPE: 'ws'
 ONEBOT_ACCESS_TOKEN: ''
 GITHUB_WEBHOOK:
   - NAME: github

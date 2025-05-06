@@ -24,7 +24,7 @@ import logging
 from fastapi import APIRouter, Request, HTTPException
 
 from app.core import GitHubWebhookHandler
-from app.botclient import get_onebot_client
+from app.botclient import BotClient
 from app.models import MessageSegment
 from app.models.config import get_settings
 
@@ -39,7 +39,7 @@ async def github_webhook(
 ):      # pylint: disable=too-many-return-statements
     """处理 GitHub webhook 请求"""
 
-    onebot_client = get_onebot_client()
+    onebot_client = BotClient.get_client("onebot")
 
     if not onebot_client:
         logger.error("OneBot 客户端未初始化，无法处理请求")

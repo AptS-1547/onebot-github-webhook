@@ -21,18 +21,63 @@ OneBot GitHub Webhook botclient 模块
 本程序遵循 Apache License 2.0 许可证
 """
 
+import logging
+from typing import Dict, Optional, Any
+
 from .onebot import (
-    OneBotWebSocketClient,
-    OneBotHTTPClient,
     init_onebot_client,
-    get_onebot_client,
     shutdown_onebot_client
 )
 
+_logger = logging.getLogger(__name__)
+
+class BotClient:
+    """统一的 Bot 客户端接口"""
+
+    _clients_registry: Dict[str, Any] = {}
+
+    @classmethod
+    async def init_client(cls, client_type: str, *args, **kwargs):
+        """
+        初始化 Bot 客户端
+        根据 client_type 的不同，初始化不同的 Bot 客户端
+        """
+
+        _logger.info("Initializing client of type: %s", client_type)
+
+        if client_type == "onebot":
+            client = await init_onebot_client(*args, **kwargs)
+        elif client_type == "rocketchat":
+            raise NotImplementedError("Rocket.Chat client is not implemented yet.")
+        elif client_type == "telegram":
+            raise NotImplementedError("Telegram client is not implemented yet.")
+        else:
+            raise ValueError(f"Unsupported client type: {client_type}")
+
+        cls._clients_registry[client_type] = client
+        return client
+
+    @classmethod
+    def get_client(cls, client_type: str) -> Optional[Any]:
+        """
+        获取指定类型的客户端实例
+        
+        Args:
+            client_type: 客户端类型
+            
+        Returns:
+            客户端实例，如果不存在则返回None
+        """
+        return cls._clients_registry.get(client_type)
+
+    @classmethod
+    def shutdown_client(cls, *args, **kwargs):
+        """
+        关闭 Bot 客户端
+        关闭全部的 Bot 客户端
+        """
+        return shutdown_onebot_client(*args, **kwargs)
+
 __all__ = [
-    "OneBotWebSocketClient",
-    "OneBotHTTPClient",
-    "init_onebot_client",
-    "get_onebot_client",
-    "shutdown_onebot_client"
+    "BotClient",
 ]

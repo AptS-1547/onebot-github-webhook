@@ -414,7 +414,7 @@ class OneBotHTTPClient(OnebotClient):      # pylint: disable=too-few-public-meth
 _ONEBOT_CLIENT = None
 
 async def init_onebot_client(
-        client_type: str,
+        portol_type: str,
         url: str,
         access_token: str = "",
         max_retries: int = 5,
@@ -424,7 +424,7 @@ async def init_onebot_client(
     初始化全局 OneBot 客户端
     
     参数:
-        client_type: 客户端类型，"ws" 或 "http"
+        portol_type: 客户端类型，"ws" 或 "http"
         url: OneBot 实现的 URL 地址
         access_token: 鉴权 token，如果有的话
         max_retries: 最大重试次数 (仅用于 WebSocket)
@@ -439,7 +439,7 @@ async def init_onebot_client(
         logger.warning("OneBot 客户端已经初始化，将返回现有实例")
         return _ONEBOT_CLIENT
 
-    if client_type == "ws":
+    if portol_type == "ws":
         _ONEBOT_CLIENT = OneBotWebSocketClient(url, access_token)
         # 启动 WebSocket 连接
         logger.info("正在初始化 WebSocket 连接...")
@@ -449,10 +449,10 @@ async def init_onebot_client(
         except Exception as e:  # pylint: disable=broad-except
             logger.error("建立 WebSocket 连接失败: %s", e)
             raise
-    elif client_type == "http":
+    elif portol_type == "http":
         _ONEBOT_CLIENT = OneBotHTTPClient(url, access_token)
     else:
-        raise ValueError(f"不支持的客户端类型: {client_type}")
+        raise ValueError(f"不支持的协议类型: {portol_type}")
 
     return _ONEBOT_CLIENT
 

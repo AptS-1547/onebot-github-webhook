@@ -29,7 +29,7 @@ from fastapi import FastAPI
 
 from app.api import api_router
 from app.models import get_settings
-from app.botclient import init_onebot_client, shutdown_onebot_client
+from app.botclient import BotClient
 from app.utils.exceptions import InitializationError
 
 
@@ -46,8 +46,9 @@ async def lifespan(_: FastAPI):
     """
 
     try:
-        await init_onebot_client(
-            client_type=config.ONEBOT_TYPE,
+        await BotClient.init_client(
+            client_type="onebot",
+            portol_type=config.ONEBOT_PORTOL_TYPE,
             url=config.ONEBOT_URL,
             access_token=config.ONEBOT_ACCESS_TOKEN
         )
@@ -63,7 +64,7 @@ async def lifespan(_: FastAPI):
 
     yield
 
-    await shutdown_onebot_client()
+    await BotClient.shutdown_client()
 
 app = FastAPI(lifespan=lifespan)
 
