@@ -104,7 +104,7 @@ class Config(BaseModel):
             default_config = {
                 "ENV": "production",
                 "ONEBOT_URL": "",
-                "ONEBOT_PORTOL_TYPE": "ws",
+                "ONEBOT_PROTOCOL_TYPE": "ws",
                 "ONEBOT_ACCESS_TOKEN": "",
                 "GITHUB_WEBHOOK": [
                     {
