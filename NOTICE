@@ -6,6 +6,7 @@ This product includes software developed by AptS-1547 (https://github.com/AptS-1
 This software uses the following third-party libraries that are distributed
 under their own licenses:
 
+- APScheduler (https://github.com/agronholm/apscheduler) - MIT License
 - FastAPI (https://fastapi.tiangolo.com/) - MIT License
 - Pydantic (https://pydantic-docs.helpmanual.io/) - MIT License
 - Pydantic-settings (https://github.com/pydantic/pydantic-settings) - MIT License
