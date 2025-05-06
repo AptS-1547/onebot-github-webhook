@@ -92,26 +92,40 @@ class GitHubWebhookHandler:
 
         Args:
             repo_name: 仓库名
-            branch: 分支名
+            branch: 分支名 (可能为空，对于非push事件)
             event_type: 事件类型
             webhooks: webhook 配置列表
 
         Returns:
             匹配的 webhook 配置或 None
         """
+        logger.debug("尝试匹配 webhook: 仓库=%s, 分支=%s, 事件类型=%s", repo_name, branch, event_type)
+
         for webhook in webhooks:
-            # 检查仓库名是否匹配配置中的任一模式
             repo_matches = any(match_pattern(repo_name, repo_pattern)
-                              for repo_pattern in webhook.REPO)
+                            for repo_pattern in webhook.REPO)
+            if not repo_matches:
+                continue
 
-            # 检查分支名是否匹配配置中的任一模式
-            branch_matches = any(match_pattern(branch, branch_pattern)
-                                for branch_pattern in webhook.BRANCH)
+            if event_type not in webhook.EVENTS:
+                continue
 
-            # 检查事件类型是否匹配
-            if (repo_matches and branch_matches and event_type in webhook.EVENTS):
-                return webhook
+            if event_type in ["push", "pull_request"]:
+                branch_matches = any(match_pattern(branch, branch_pattern)
+                                    for branch_pattern in webhook.BRANCH)
+                if not branch_matches:
+                    continue
+            else:
+                if getattr(webhook, "BRANCH_CHECK_ALL", False) and branch:
+                    branch_matches = any(match_pattern(branch, branch_pattern)
+                                        for branch_pattern in webhook.BRANCH)
+                    if not branch_matches:
+                        continue
 
+            logger.debug("找到匹配的webhook配置: %s", webhook)
+            return webhook
+
+        logger.debug("未找到匹配的webhook配置")
         return None
 
     @staticmethod
