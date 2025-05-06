@@ -132,3 +132,79 @@ class GitHubWebhookHandler:
             "commits": payload.get("commits", []),
             "commit_count": len(payload.get("commits", []))
         }
+
+    @staticmethod
+    def extract_pull_request_data(payload: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        从 pull request 事件中提取相关数据
+
+        Args:
+            payload: GitHub webhook 负载
+
+        Returns:
+            包含提取数据的字典
+        """
+        return {
+            "repo_name": payload.get("repository", {}).get("full_name"),
+            "pull_request_number": payload.get("number"),
+            "action": payload.get("action"),
+            "pull_request": payload.get("pull_request", {}),
+            "user": payload.get("sender", {}).get("login")
+        }
+
+    @staticmethod
+    def extract_issue_data(payload: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        从 issue 事件中提取相关数据
+
+        Args:
+            payload: GitHub webhook 负载
+
+        Returns:
+            包含提取数据的字典
+        """
+        return {
+            "repo_name": payload.get("repository", {}).get("full_name"),
+            "issue_number": payload.get("issue", {}).get("number"),
+            "action": payload.get("action"),
+            "issue": payload.get("issue", {}),
+            "user": payload.get("sender", {}).get("login")
+        }
+
+    @staticmethod
+    def extract_release_data(payload: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        从 release 事件中提取相关数据
+
+        Args:
+            payload: GitHub webhook 负载
+
+        Returns:
+            包含提取数据的字典
+        """
+        return {
+            "repo_name": payload.get("repository", {}).get("full_name"),
+            "release_tag": payload.get("release", {}).get("tag_name"),
+            "action": payload.get("action"),
+            "release": payload.get("release", {}),
+            "user": payload.get("sender", {}).get("login")
+        }
+
+    @staticmethod
+    def extract_issue_comment_data(payload: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        从 issue comment 事件中提取相关数据
+
+        Args:
+            payload: GitHub webhook 负载
+
+        Returns:
+            包含提取数据的字典
+        """
+        return {
+            "repo_name": payload.get("repository", {}).get("full_name"),
+            "issue_number": payload.get("issue", {}).get("number"),
+            "action": payload.get("action"),
+            "comment": payload.get("comment", {}),
+            "user": payload.get("sender", {}).get("login")
+        }

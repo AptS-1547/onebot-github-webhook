@@ -12,17 +12,24 @@
 # limitations under the License.
 
 """
-OneBot GitHub Webhook models 模块
-本模块用于定义 OneBot GitHub Webhook 的数据模型，包括 Webhook 配置和 OneBot 目标类型。
+Onebot Github Webhook 消息模型
+本文件用于定义 Onebot Github Webhook 的消息模型。
+作者：AptS:1547
 版本：0.1.0-alpha
 日期：2025-04-17
 本程序遵循 Apache License 2.0 许可证
 """
 
-from .config import get_settings
-from .message import MessageSegment
+from typing import Dict, Any
 
-__all__ = [
-    "get_settings",
-    "MessageSegment"
-]
+class MessageSegment:
+    """
+    消息段类
+    用于定义消息段的类型和数据
+    """
+
+    # 消息段工具函数
+    @staticmethod
+    def text(content: str) -> Dict[str, Any]:
+        """纯文本消息"""
+        return {"type": "text", "data": {"text": content}}

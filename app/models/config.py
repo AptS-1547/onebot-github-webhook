@@ -49,7 +49,7 @@ class Config(BaseModel):
 
     ENV: str = "production"
     ONEBOT_URL: str = ""
-    ONEBOT_TYPE: Literal["http", "ws"] = "ws"
+    ONEBOT_PROTOCOL_TYPE: Literal["http", "ws"] = "ws"
     ONEBOT_ACCESS_TOKEN: str = ""
     GITHUB_WEBHOOK: List[WebhookConfig] = []
 
@@ -57,9 +57,9 @@ class Config(BaseModel):
     def validate_onebot_url(self) -> 'Config':
         """验证 ONEBOT_URL 的格式是否与 ONEBOT_TYPE 匹配"""
         if self.ONEBOT_URL:
-            if self.ONEBOT_TYPE == "ws" and not (self.ONEBOT_URL.startswith("ws://") or self.ONEBOT_URL.startswith("wss://")):          # pylint: disable=line-too-long
+            if self.ONEBOT_PROTOCOL_TYPE == "ws" and not (self.ONEBOT_URL.startswith("ws://") or self.ONEBOT_URL.startswith("wss://")):          # pylint: disable=line-too-long
                 raise ValueError("当 ONEBOT_TYPE 为 ws 时，ONEBOT_URL 必须以 'ws://' 或 'wss://' 开头")
-            if self.ONEBOT_TYPE == "http" and not (self.ONEBOT_URL.startswith("http://") or self.ONEBOT_URL.startswith("https://")):    # pylint: disable=line-too-long
+            if self.ONEBOT_PROTOCOL_TYPE == "http" and not (self.ONEBOT_URL.startswith("http://") or self.ONEBOT_URL.startswith("https://")):    # pylint: disable=line-too-long
                 raise ValueError("当 ONEBOT_TYPE 为 http 时，ONEBOT_URL 必须以 'http://' 或 'https://' 开头")
         return self
 
@@ -104,7 +104,7 @@ class Config(BaseModel):
             default_config = {
                 "ENV": "production",
                 "ONEBOT_URL": "",
-                "ONEBOT_TYPE": "ws",
+                "ONEBOT_PROTOCOL_TYPE": "ws",
                 "ONEBOT_ACCESS_TOKEN": "",
                 "GITHUB_WEBHOOK": [
                     {

@@ -12,17 +12,18 @@
 # limitations under the License.
 
 """
-OneBot GitHub Webhook models 模块
-本模块用于定义 OneBot GitHub Webhook 的数据模型，包括 Webhook 配置和 OneBot 目标类型。
+GitHub 处理模块
+本模块用于处理 GitHub Webhook 事件以及轮训 GitHub 仓库的相关操作。
+作者：AptS:1547
 版本：0.1.0-alpha
 日期：2025-04-17
 本程序遵循 Apache License 2.0 许可证
 """
 
-from .config import get_settings
-from .message import MessageSegment
+from .webhook import GitHubWebhookHandler
+from .polling import GitHubPollingHandler
 
 __all__ = [
-    "get_settings",
-    "MessageSegment"
+    "GitHubWebhookHandler",
+    "GitHubPollingHandler",
 ]
