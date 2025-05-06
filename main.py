@@ -48,7 +48,7 @@ async def lifespan(_: FastAPI):
     try:
         await BotClient.init_client(
             client_type="onebot",
-            protocol_type=config.ONEBOT_PORTOL_TYPE,
+            protocol_type=config.ONEBOT_PROTOCOL_TYPE,
             url=config.ONEBOT_URL,
             access_token=config.ONEBOT_ACCESS_TOKEN
         )
