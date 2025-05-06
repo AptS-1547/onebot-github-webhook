@@ -29,7 +29,7 @@ from fastapi import FastAPI
 
 from app.api import api_router
 from app.models import get_settings
-from app.onebot import init_onebot_client, shutdown_onebot_client
+from app.botclient import init_onebot_client, shutdown_onebot_client
 from app.utils.exceptions import InitializationError
 
 

@@ -410,11 +410,6 @@ class OneBotHTTPClient(OnebotClient):      # pylint: disable=too-few-public-meth
             logger.error("发送消息时出错: %s", e)
             raise
 
-# 消息段工具函数
-def text(content: str) -> Dict[str, Any]:
-    """纯文本消息"""
-    return {"type": "text", "data": {"text": content}}
-
 # 全局客户端实例
 _ONEBOT_CLIENT = None
 

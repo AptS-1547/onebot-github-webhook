@@ -24,7 +24,8 @@ import logging
 from fastapi import APIRouter, Request, HTTPException
 
 from app.core import GitHubWebhookHandler
-from app.onebot import text, get_onebot_client
+from app.botclient import get_onebot_client
+from app.models import MessageSegment
 from app.models.config import get_settings
 
 router = APIRouter()
@@ -118,12 +119,12 @@ def format_github_push_message(repo_name, branch, pusher, commit_count, commits)
     """格式化 GitHub 推送消息"""
 
     message = [
-        text("📢 GitHub 推送通知\n"),
-        text(f"仓库：{repo_name}\n"),
-        text(f"分支：{branch}\n"),
-        text(f"推送者：{pusher}\n"),
-        text(f"提交数量：{commit_count}\n\n"),
-        text("最新提交：\n")
+        MessageSegment.text("📢 GitHub 推送通知\n"),
+        MessageSegment.text(f"仓库：{repo_name}\n"),
+        MessageSegment.text(f"分支：{branch}\n"),
+        MessageSegment.text(f"推送者：{pusher}\n"),
+        MessageSegment.text(f"提交数量：{commit_count}\n\n"),
+        MessageSegment.text("最新提交：\n")
     ]
 
     # 最多展示3条最新提交
@@ -132,6 +133,6 @@ def format_github_push_message(repo_name, branch, pusher, commit_count, commits)
         commit_message = commit["message"].split("\n")[0]  # 只取第一行
         author = commit.get("author", {}).get("name", "未知")
 
-        message.append(text(f"[{short_id}] {commit_message} (by {author})\n"))
+        message.append(MessageSegment.text(f"[{short_id}] {commit_message} (by {author})\n"))
 
     return message

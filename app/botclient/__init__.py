@@ -12,8 +12,9 @@
 # limitations under the License.
 
 """
-OneBot GitHub Webhook onebot 模块
-本模块用于处理 OneBot GitHub Webhook 事件的发送逻辑，包括 WebSocket 和 HTTP 客户端的实现。
+OneBot GitHub Webhook botclient 模块
+本模块用于各类 Bot 客户端的实现，包括 Onebot、Rocket.Chat、Telegram 等。
+本模块的设计目标是提供一个统一的接口，以便于在不同的 Bot 客户端之间进行切换和扩展。
 作者：AptS:1547
 版本：0.1.0-alpha
 日期：2025-04-17
@@ -23,7 +24,6 @@ OneBot GitHub Webhook onebot 模块
 from .onebot import (
     OneBotWebSocketClient,
     OneBotHTTPClient,
-    text,
     init_onebot_client,
     get_onebot_client,
     shutdown_onebot_client
@@ -32,7 +32,6 @@ from .onebot import (
 __all__ = [
     "OneBotWebSocketClient",
     "OneBotHTTPClient",
-    "text",
     "init_onebot_client",
     "get_onebot_client",
     "shutdown_onebot_client"
