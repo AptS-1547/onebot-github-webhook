@@ -79,7 +79,7 @@ docker run -d \
   e1saps/onebot-github-webhook:latest
 ```
 
-或使用 Docker Compose:
+或使用 Docker Compose，参考文件 `docker/docker-compose.yml`：
 
 ```bash
 cd docker
