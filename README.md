@@ -92,7 +92,7 @@ pip install -r requirements.txt
 或者复制示例配置文件：
 
 ```bash
-cp config/config.example.yaml config.yaml
+cp config.example.yaml config.yaml
 ```
 
 ## 配置说明
