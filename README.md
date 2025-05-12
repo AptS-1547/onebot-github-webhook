@@ -103,7 +103,7 @@ Restart=on-failure
 RestartSec=5s
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
 ```
 
 启用服务:
