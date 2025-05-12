@@ -2,6 +2,12 @@
 
 ### Docker 部署
 
+**⚠️ 注意: 请确保 `config.yaml` 存在于当前目录下，否则 Docker 容器将无法找到配置文件。**
+
+首先，确保 Docker 和 Docker Compose 已安装。  
+并且请你复制项目中的 `config.example.yaml` 为 `config.yaml`，并根据需要修改配置。  
+然后，使用以下命令启动 Docker 容器：  
+
 ```bash
 docker run -d \
   --name onebot-github-webhook \
@@ -10,7 +16,7 @@ docker run -d \
   e1saps/onebot-github-webhook:latest
 ```
 
-或使用 Docker Compose:
+或使用 Docker Compose，参考文件 `docker/docker-compose.yml`：
 
 ```bash
 cd docker
@@ -34,7 +40,7 @@ Restart=on-failure
 RestartSec=5s
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
 ```
 
 启用服务:
