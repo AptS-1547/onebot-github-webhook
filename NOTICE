@@ -1,10 +1,10 @@
-OneBot GitHub Webhook
+# OneBot GitHub Webhook
+
 Copyright 2025 AptS-1547
 
-This product includes software developed by AptS-1547 (https://github.com/AptS-1547).
+本软件由 AptS-1547 (https://github.com/AptS-1547) 开发。
 
-This software uses the following third-party libraries that are distributed
-under their own licenses:
+本软件使用以下第三方库，这些库根据各自的许可证分发：
 
 - APScheduler (https://github.com/agronholm/apscheduler) - MIT License
 - FastAPI (https://fastapi.tiangolo.com/) - MIT License
@@ -13,7 +13,20 @@ under their own licenses:
 - aiohttp (https://docs.aiohttp.org/) - Apache License 2.0
 - PyYAML (https://pyyaml.org/) - MIT License
 - Uvicorn (https://www.uvicorn.org/) - BSD License
-- fnmatch (Python Standard Library) - Python Software Foundation License
+- Jinja2 (https://palletsprojects.com/p/jinja/) - BSD-3-Clause License
+- pytest (https://docs.pytest.org/) - MIT License
+- pytest-asyncio (https://github.com/pytest-dev/pytest-asyncio) - Apache License 2.0
+- pylint (https://github.com/pylint-dev/pylint) - GPL-2.0 License
 
-All dependencies and their transitive dependencies are subject to their own licenses.
-Please see each project for full licensing details.
+本项目也使用了以下 Python 标准库组件：
+
+- fnmatch - Python Software Foundation License
+- asyncio - Python Software Foundation License
+- logging - Python Software Foundation License
+- typing - Python Software Foundation License
+- datetime - Python Software Foundation License
+
+所有依赖项及其传递依赖项均受其各自许可证的约束。
+请查阅每个项目的完整许可详情。
+
+本软件根据 Apache License 2.0 许可证分发，详情请参阅 LICENSE 文件。
