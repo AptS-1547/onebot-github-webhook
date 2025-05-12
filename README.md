@@ -61,39 +61,66 @@ _✨ GitHub Webhook 推送消息到 QQ 群 ✨_
   - 服务健康检查
   - Prometheus 指标导出
 
-## 安装
+## 部署建议
 
-1. 克隆本仓库：
+### Docker 部署
 
-```bash
-git clone https://github.com/AptS-1547/onebot-github-webhook
-cd onebot-github-webhook
-```
+首先，确保 Docker 和 Docker Compose 已安装。  
+并且请你复制项目中的 `config.example.yaml` 为 `config.yaml`，并根据需要修改配置。  
+然后，使用以下命令启动 Docker 容器：  
 
-2. 创建并激活虚拟环境：
-
-```bash
-python -m venv .venv
-source .venv/bin/activate  # Linux/Mac
-# 或者 .venv\Scripts\activate  # Windows
-```
-
-3. 安装依赖：
+**⚠️ 注意: 请确保 `config.yaml` 存在于当前目录下，否则 Docker 容器将无法找到配置文件。**
 
 ```bash
-pip install -r requirements.txt
-# 或者使用 Poetry
-# poetry install
+docker run -d \
+  --name onebot-github-webhook \
+  -p 8000:8000 \
+  -v $(pwd)/config.yaml:/app/config.yaml \
+  e1saps/onebot-github-webhook:latest
 ```
 
-4. 配置文件设置：
-
-在程序第一次运行时会自动生成 config.yaml 文件，您可以根据需要修改其中的配置项。  
-或者复制示例配置文件：
+或使用 Docker Compose:
 
 ```bash
-cp config.example.yaml config.yaml
+cd docker
+docker-compose up -d
 ```
+
+### Systemd 服务
+
+创建 `/etc/systemd/system/onebot-github-webhook.service`:
+
+```ini
+[Unit]
+Description=OneBot GitHub Webhook Service
+After=network.target
+
+[Service]
+User=www-data
+WorkingDirectory=/opt/onebot-github-webhook
+ExecStart=/opt/onebot-github-webhook/.venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8000
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+```
+
+启用服务:
+
+```bash
+sudo systemctl enable onebot-github-webhook
+sudo systemctl start onebot-github-webhook
+```
+
+## GitHub Webhook 设置
+
+1. 在 GitHub 仓库中前往 Settings -> Webhooks -> Add webhook
+2. Payload URL 设置为 `http://你的服务器地址:8000/github-webhook`
+3. Content type 选择 `application/json`
+4. Secret 填写与配置文件中 `SECRET` 相同的值
+5. 选择需要监听的事件（或选择 "Send me everything" 接收所有事件）
+6. 启用 webhook（勾选 "Active"）
 
 ## 配置说明
 
@@ -128,7 +155,41 @@ GITHUB_WEBHOOK:
         id: 123456789  # 目标 ID，群号或用户 ID
 ```
 
-## 运行
+## 本地开发
+
+1. 克隆本仓库：
+
+```bash
+git clone https://github.com/AptS-1547/onebot-github-webhook
+cd onebot-github-webhook
+```
+
+2. 创建并激活虚拟环境：
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Linux/Mac
+# 或者 .venv\Scripts\activate  # Windows
+```
+
+3. 安装依赖：
+
+```bash
+pip install -r requirements.txt
+# 或者使用 Poetry
+# poetry install
+```
+
+4. 配置文件设置：
+
+在程序第一次运行时会自动生成 config.yaml 文件，您可以根据需要修改其中的配置项。  
+或者复制示例配置文件：
+
+```bash
+cp config.example.yaml config.yaml
+```
+
+### 运行
 
 ```bash
 uvicorn main:app --host 0.0.0.0 --port 8000
@@ -139,15 +200,6 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 ```bash
 python main.py
 ```
-
-## GitHub Webhook 设置
-
-1. 在 GitHub 仓库中前往 Settings -> Webhooks -> Add webhook
-2. Payload URL 设置为 `http://你的服务器地址:8000/github-webhook`
-3. Content type 选择 `application/json`
-4. Secret 填写与配置文件中 `SECRET` 相同的值
-5. 选择需要监听的事件（或选择 "Send me everything" 接收所有事件）
-6. 启用 webhook（勾选 "Active"）
 
 ## 开发路线图
 
@@ -299,59 +351,6 @@ onebot-github-webhook/
 ├── pyproject.toml            # Python 项目配置
 ├── poetry.lock               # Poetry 依赖锁定文件
 └── README.md                 # 项目说明文档
-```
-
-
-## 部署建议
-
-### Docker 部署
-
-首先，确保 Docker 和 Docker Compose 已安装。  
-并且请你复制项目中的 `config.example.yaml` 为 `config.yaml`，并根据需要修改配置。  
-然后，使用以下命令启动 Docker 容器：  
-
-**⚠️ 注意: 请确保 `config.yaml` 存在于当前目录下，否则 Docker 容器将无法找到配置文件。**
-
-```bash
-docker run -d \
-  --name onebot-github-webhook \
-  -p 8000:8000 \
-  -v $(pwd)/config.yaml:/app/config.yaml \
-  e1saps/onebot-github-webhook:latest
-```
-
-或使用 Docker Compose:
-
-```bash
-cd docker
-docker-compose up -d
-```
-
-### Systemd 服务
-
-创建 `/etc/systemd/system/onebot-github-webhook.service`:
-
-```ini
-[Unit]
-Description=OneBot GitHub Webhook Service
-After=network.target
-
-[Service]
-User=www-data
-WorkingDirectory=/opt/onebot-github-webhook
-ExecStart=/opt/onebot-github-webhook/.venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8000
-Restart=on-failure
-RestartSec=5s
-
-[Install]
-WantedBy=multi-user.target
-```
-
-启用服务:
-
-```bash
-sudo systemctl enable onebot-github-webhook
-sudo systemctl start onebot-github-webhook
 ```
 
 ## 常见问题
