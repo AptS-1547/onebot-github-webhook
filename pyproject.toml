@@ -32,7 +32,7 @@ priority = "primary"
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.5"
 pytest-asyncio = "^1.1.0"
-pylint = "^3.3.7"
+pylint = "^3.3.9"
 
 
 [build-system]
