@@ -30,7 +30,7 @@ priority = "primary"
 
 
 [tool.poetry.group.test.dependencies]
-pytest = "^8.3.5"
+pytest = "^8.4.2"
 pytest-asyncio = "^1.1.0"
 pylint = "^3.3.9"
 
