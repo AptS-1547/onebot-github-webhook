@@ -62,18 +62,18 @@ def get_bot_client() -> BotClientInterface:
 
 
 def get_webhook_service(
-    bot_client: Annotated[BotClientInterface, Depends(get_bot_client)]
+    config: Annotated[Config, Depends(get_config)]
 ) -> WebhookService:
     """
     获取 Webhook 服务实例。
 
     Args:
-        bot_client: Bot 客户端实例（通过依赖注入）
+        config: 应用配置实例（通过依赖注入）
 
     Returns:
         WebhookService: Webhook 服务实例
     """
-    return WebhookService(bot_client)
+    return WebhookService(config)
 
 
 # 类型别名，方便在其他模块中使用

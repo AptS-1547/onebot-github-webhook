@@ -1,0 +1,164 @@
+# OneBot GitHub Webhook 配置文件示例
+# 配置格式：TOML
+# 文档：https://toml.io/
+
+# ============================================================================
+# 应用配置
+# ============================================================================
+[app]
+env = "production"        # 运行环境：production / development
+log_level = "INFO"        # 日志级别：DEBUG / INFO / WARNING / ERROR
+
+# ============================================================================
+# Bot 后端配置
+# ============================================================================
+# 可以配置多个不同的 Bot 后端，每个后端需要指定：
+# - name: 唯一标识名称
+# - platform: 平台类型（onebot / telegram / wecom 等）
+# - enabled: 是否启用
+# - module: (可选) 自定义模块路径，默认为 app.botclient.{platform}
+# - connection: 连接配置（根据平台不同而不同）
+
+[[bot_backends]]
+name = "onebot"           # Bot 实例名称（用于 webhook_sources 中引用）
+platform = "onebot"       # 平台类型：onebot（QQ）
+enabled = true            # 是否启用
+# module = "app.botclient.onebot"  # 可选：自定义模块路径（默认自动推断）
+
+[bot_backends.connection]
+protocol = "http"         # 协议类型：http / ws
+url = "http://localhost:8080"          # OneBot HTTP API 地址
+access_token = "your_token_here"       # OneBot 访问令牌
+
+# 示例：使用外部 OneBot 适配器包
+# [[bot_backends]]
+# name = "onebot-external"
+# platform = "onebot"
+# module = "onebot_adapter"  # 使用独立安装的外部包
+# enabled = false
+#
+# [bot_backends.connection]
+# protocol = "http"
+# url = "http://localhost:8080"
+# access_token = "token"
+
+# 示例：Telegram Bot 配置（阶段 3 后支持）
+# [[bot_backends]]
+# name = "telegram-bot"
+# platform = "telegram"
+# enabled = false
+#
+# [bot_backends.connection]
+# token = "bot_token_here"
+
+# 示例：企业微信机器人配置（阶段 3 后支持）
+# [[bot_backends]]
+# name = "wecom-bot"
+# platform = "wecom"
+# enabled = false
+#
+# [bot_backends.connection]
+# webhook_url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxx"
+
+# ============================================================================
+# 全局消息目标配置
+# ============================================================================
+# 定义可复用的消息发送目标，可在多个 webhook_sources 中引用
+# 每个 target 需要指定：
+# - name: 目标名称（唯一标识）
+# - bot: 引用的 bot_backends.name
+# - type: 目标类型（group/private/channel 等，取决于平台）
+# - id: 目标 ID（字符串格式，兼容各平台）
+
+[[targets]]
+name = "qq-dev-group"
+bot = "onebot"
+type = "group"
+id = "123456789"
+
+[[targets]]
+name = "qq-admin-private"
+bot = "onebot"
+type = "private"
+id = "987654321"
+
+# 示例：Telegram 频道目标（阶段 3 后支持）
+# [[targets]]
+# name = "telegram-announce"
+# bot = "telegram-bot"
+# type = "channel"
+# id = "@mychannel"
+
+# 示例：企业微信群目标（阶段 3 后支持）
+# [[targets]]
+# name = "wecom-tech-chat"
+# bot = "wecom-bot"
+# type = "chat"
+# id = "ww1234567890"
+
+# ============================================================================
+# Webhook 数据源配置
+# ============================================================================
+# 可以配置多个 Webhook 数据源，每个源需要指定：
+# - name: 数据源名称
+# - type: 数据源类型（github / gitlab / gitea / generic）
+# - secret: Webhook 签名密钥（可选）
+# - repos: 仓库过滤列表（支持通配符）
+# - branches: 分支过滤列表（支持通配符）
+# - events: 事件类型列表
+# - targets: 消息发送目标列表（字符串数组，引用上面定义的 target 名称）
+
+[[webhook_sources]]
+name = "github-main"      # 数据源名称
+type = "github"           # 数据源类型：github
+secret = ""               # Webhook 密钥（空字符串表示跳过签名验证）
+repos = [                 # 仓库过滤（支持通配符 *）
+    "your/repo",
+    "org/*",              # 匹配组织下的所有仓库
+]
+branches = [              # 分支过滤（支持通配符 *）
+    "main",
+    "develop",
+    "release/*",          # 匹配所有 release 分支
+]
+events = [                # GitHub 事件类型
+    "push",
+    "pull_request",
+    "issues",
+    "issue_comment",
+    "release",
+]
+targets = [               # 引用上面定义的 target 名称
+    "qq-dev-group",
+    "qq-admin-private",
+]
+
+# 示例：多个 Webhook 源配置，共享同一个 target
+# [[webhook_sources]]
+# name = "github-releases"
+# type = "github"
+# secret = "another_secret"
+# repos = ["company/product"]
+# branches = ["*"]          # 所有分支
+# events = ["release"]      # 只监听发布事件
+# targets = ["telegram-announce", "qq-dev-group"]  # 同时发送到多个平台
+
+# 示例：GitLab 数据源配置（阶段 4 后支持）
+# [[webhook_sources]]
+# name = "gitlab-project"
+# type = "gitlab"
+# secret = "gitlab_secret"
+# repos = ["group/project"]
+# branches = ["main"]
+# events = ["push", "merge_request"]
+# targets = ["wecom-tech-chat"]
+
+# 示例：通用 Webhook 源配置（阶段 4 后支持）
+# [[webhook_sources]]
+# name = "jenkins-ci"
+# type = "generic"
+# secret = "jenkins_secret"
+# repos = []                # 通用 Webhook 可能不需要仓库过滤
+# branches = []
+# events = ["build"]        # 自定义事件类型
+# targets = ["qq-dev-group"]

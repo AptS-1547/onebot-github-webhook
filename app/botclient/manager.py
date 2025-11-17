@@ -116,17 +116,14 @@ class BotClientManager:
         return name in cls._clients
 
     @classmethod
-    def list_clients(cls) -> Dict[str, str]:
+    def list_clients(cls) -> Dict[str, BotClientInterface]:
         """
         列出所有已注册的客户端。
 
         Returns:
-            Dict[str, str]: 客户端名称到客户端类型的映射
+            Dict[str, BotClientInterface]: 客户端名称到客户端实例的映射
         """
-        return {
-            name: client.client_type
-            for name, client in cls._clients.items()
-        }
+        return cls._clients.copy()
 
     @classmethod
     async def close_client(cls, name: str) -> bool:

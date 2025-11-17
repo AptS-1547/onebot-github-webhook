@@ -3,7 +3,8 @@ name = "onebot-github-webhook"
 version = "0.1.0-alpha"
 description = "一个用于接收 GitHub Webhook 并通过 OneBot 协议将推送通知转发到 QQ 群的服务。"
 authors = [
-    {name = "AptS-1547",email = "esaps@esaps.net"}
+    {name = "AptS-1547",email = "apts-1547@esaps.net"},
+    {name = "AptS-1549",email = "apts-1549@esaps.net"}
 ]
 license = {text = "Apache License 2.0"}
 readme = "README.md"
@@ -16,7 +17,9 @@ dependencies = [
     "pyyaml (>=6.0.2,<7.0.0)",
     "uvicorn (>=0.34.2,<0.35.0)",
     "jinja2 (>=3.1.6,<4.0.0)",
-    "apscheduler (>=3.11.0,<4.0.0)"
+    "apscheduler (>=3.11.0,<4.0.0)",
+    "tomli (>=2.0.0,<3.0.0)",
+    "tomli-w (>=1.1.0,<2.0.0)"
 ]
 
 [tool.poetry]

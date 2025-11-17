@@ -22,7 +22,14 @@
 本程序遵循 Apache License 2.0 许可证
 """
 
-from app.models.config import Config, WebhookConfig, OnebotTarget, get_settings
+from app.models.config import (
+    Config,
+    WebhookConfig,
+    OnebotTarget,
+    NamedTargetConfig,
+    WebhookTargetConfig,
+    get_settings
+)
 from app.models.message import MessageSegment, MessageBuilder
 from app.models.webhook_event import (
     PushEventData,
@@ -31,11 +38,19 @@ from app.models.webhook_event import (
     ReleaseEventData,
     IssueCommentEventData
 )
+from app.models.universal_message import (
+    UniversalMessage,
+    UniversalMessageSegment,
+    MessageSegmentType,
+    MessageBuilder as UniversalMessageBuilder
+)
 
 __all__ = [
     "Config",
     "WebhookConfig",
     "OnebotTarget",
+    "NamedTargetConfig",
+    "WebhookTargetConfig",
     "get_settings",
     "MessageSegment",
     "MessageBuilder",
@@ -43,5 +58,9 @@ __all__ = [
     "PullRequestEventData",
     "IssueEventData",
     "ReleaseEventData",
-    "IssueCommentEventData"
+    "IssueCommentEventData",
+    "UniversalMessage",
+    "UniversalMessageSegment",
+    "MessageSegmentType",
+    "UniversalMessageBuilder"
 ]

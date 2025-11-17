@@ -30,6 +30,7 @@ from typing import Union, List, Dict, Any, Optional
 import aiohttp
 
 from app.botclient.base import BotClientInterface
+from app.models.universal_message import UniversalMessage
 from app.exceptions import (
     BotClientError,
     BotClientConnectionError,
@@ -427,8 +428,8 @@ class OneBotWebSocketClient(BotClientInterface):
     async def send_message(
         self,
         target_type: str,
-        target_id: int,
-        message: Union[str, List[Dict[str, Any]]],
+        target_id: Union[int, str],
+        message: Union[str, List[Dict[str, Any]], UniversalMessage],
         **kwargs: Any
     ) -> bool:
         """
@@ -438,6 +439,9 @@ class OneBotWebSocketClient(BotClientInterface):
             target_type: 目标类型（"group" 或 "private"）
             target_id: 目标 ID（群号或用户 QQ 号）
             message: 消息内容
+                - UniversalMessage: 通用消息（自动转换）
+                - str: 纯文本
+                - List[Dict]: OneBot 消息段列表
             **kwargs: 额外参数，如 auto_escape
 
         Returns:
@@ -447,6 +451,14 @@ class OneBotWebSocketClient(BotClientInterface):
             ValueError: 目标类型不支持
             BotClientError: 发送失败
         """
+        # 转换 UniversalMessage 为 OneBot 格式
+        if isinstance(message, UniversalMessage):
+            message = message.to_onebot()
+
+        # 确保 target_id 是整数
+        if isinstance(target_id, str):
+            target_id = int(target_id)
+
         if target_type not in ["group", "private"]:
             raise ValueError(f"不支持的目标类型: {target_type}")
 
@@ -555,8 +567,8 @@ class OneBotHTTPClient(BotClientInterface):
     async def send_message(
         self,
         target_type: str,
-        target_id: int,
-        message: Union[str, List[Dict[str, Any]]],
+        target_id: Union[int, str],
+        message: Union[str, List[Dict[str, Any]], UniversalMessage],
         **kwargs: Any
     ) -> bool:
         """
@@ -566,6 +578,9 @@ class OneBotHTTPClient(BotClientInterface):
             target_type: 目标类型（"group" 或 "private"）
             target_id: 目标 ID（群号或用户 QQ 号）
             message: 消息内容
+                - UniversalMessage: 通用消息（自动转换）
+                - str: 纯文本
+                - List[Dict]: OneBot 消息段列表
             **kwargs: 额外参数，如 auto_escape
 
         Returns:
@@ -575,6 +590,14 @@ class OneBotHTTPClient(BotClientInterface):
             ValueError: 目标类型不支持
             BotClientError: 发送失败
         """
+        # 转换 UniversalMessage 为 OneBot 格式
+        if isinstance(message, UniversalMessage):
+            message = message.to_onebot()
+
+        # 确保 target_id 是整数
+        if isinstance(target_id, str):
+            target_id = int(target_id)
+
         if target_type not in ["group", "private"]:
             raise ValueError(f"不支持的目标类型: {target_type}")
 

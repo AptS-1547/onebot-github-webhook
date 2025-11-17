@@ -18,10 +18,38 @@ OneBot 客户端模块
 
 作者：AptS:1547
 版本：0.2.0
-日期：2025-04-17
+日期：2025-04-18
 本程序遵循 Apache License 2.0 许可证
 """
 
-from .onebot import OneBotWebSocketClient, OneBotHTTPClient
+from typing import Union
 
-__all__ = ["OneBotWebSocketClient", "OneBotHTTPClient"]
+from .onebot import OneBotWebSocketClient, OneBotHTTPClient
+from app.botclient.factory import BotClientFactory
+from app.models.config import BotBackendConfig
+
+
+def create_onebot_client(config: BotBackendConfig) -> Union[OneBotWebSocketClient, OneBotHTTPClient]:
+    """
+    根据配置创建 OneBot 客户端。
+
+    Args:
+        config: Bot 后端配置
+
+    Returns:
+        OneBot 客户端实例（WebSocket 或 HTTP）
+    """
+    conn = config.connection
+    protocol = conn.__dict__.get('protocol', 'http')
+    url = conn.__dict__.get('url', '')
+    access_token = conn.__dict__.get('access_token', '')
+
+    if protocol == 'ws':
+        return OneBotWebSocketClient(url, access_token)
+    return OneBotHTTPClient(url, access_token)
+
+
+# 注册到工厂
+BotClientFactory.register('onebot', create_onebot_client)
+
+__all__ = ["OneBotWebSocketClient", "OneBotHTTPClient", "create_onebot_client"]

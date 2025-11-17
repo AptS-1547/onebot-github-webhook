@@ -24,8 +24,8 @@ Webhook 服务层
 
 from typing import Dict, Any
 
-from app.botclient.base import BotClientInterface
-from app.models.config import WebhookConfig
+from app.botclient.manager import BotClientManager
+from app.models.config import Config, WebhookConfig
 from app.models.webhook_event import (
     PushEventData,
     PullRequestEventData,
@@ -47,18 +47,18 @@ class WebhookService:
     负责处理 GitHub Webhook 事件，包括解析事件、格式化消息和发送通知。
 
     Attributes:
-        bot_client: Bot 客户端实例
+        config: 应用配置实例
         formatter: 消息格式化器实例
     """
 
-    def __init__(self, bot_client: BotClientInterface) -> None:
+    def __init__(self, config: Config) -> None:
         """
         初始化 Webhook 服务。
 
         Args:
-            bot_client: Bot 客户端实例
+            config: 应用配置实例
         """
-        self.bot_client = bot_client
+        self.config = config
         self.formatter = MessageFormatter()
 
     async def process_push_event(
@@ -304,9 +304,17 @@ class WebhookService:
         """
         all_success = True
 
+        # 兼容旧格式：从 webhook_config.ONEBOT 获取目标
         for target in webhook_config.ONEBOT:
             try:
-                success = await self.bot_client.send_message(
+                # 旧格式总是使用 "onebot" 客户端
+                client = BotClientManager.get_client("onebot")
+                if client is None:
+                    logger.error("OneBot 客户端未初始化")
+                    all_success = False
+                    continue
+
+                success = await client.send_message(
                     target.type,
                     target.id,
                     message

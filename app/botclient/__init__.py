@@ -22,7 +22,8 @@ Bot 客户端模块
 本程序遵循 Apache License 2.0 许可证
 """
 
-from app.botclient.base import BotClientInterface
+from app.botclient.base import BotClientInterface, BotTarget
 from app.botclient.manager import BotClientManager
+from app.botclient.factory import BotClientFactory
 
-__all__ = ["BotClientInterface", "BotClientManager"]
+__all__ = ["BotClientInterface", "BotTarget", "BotClientManager", "BotClientFactory"]
