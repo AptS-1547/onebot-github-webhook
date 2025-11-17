@@ -22,8 +22,7 @@ Onebot Github Webhook 配置类
 
 import pathlib
 import logging
-from typing import List, Literal
-from functools import lru_cache
+from typing import List, Literal, Optional
 
 import yaml
 from pydantic import model_validator, BaseModel, ValidationError
@@ -133,7 +132,32 @@ class Config(BaseModel):
 
         return config
 
-@lru_cache()
-def get_settings():
-    """获取应用配置（缓存结果）"""
-    return Config().from_yaml()
+_config_instance: Optional[Config] = None
+
+
+def get_settings() -> Config:
+    """
+    获取应用配置（单例模式）。
+
+    Returns:
+        Config: 应用配置实例
+    """
+    global _config_instance  # pylint: disable=global-statement
+
+    if _config_instance is None:
+        _config_instance = Config.from_yaml()
+
+    return _config_instance
+
+
+def reload_settings() -> Config:
+    """
+    重新加载配置。
+
+    Returns:
+        Config: 新的配置实例
+    """
+    global _config_instance  # pylint: disable=global-statement
+
+    _config_instance = Config.from_yaml()
+    return _config_instance

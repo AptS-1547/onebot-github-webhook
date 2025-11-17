@@ -12,9 +12,9 @@
 # limitations under the License.
 
 """
-OneBot 客户端模块
+服务层模块
 
-本模块提供 OneBot V11 协议的客户端实现。
+本模块提供各类业务逻辑服务。
 
 作者：AptS:1547
 版本：0.2.0
@@ -22,6 +22,7 @@ OneBot 客户端模块
 本程序遵循 Apache License 2.0 许可证
 """
 
-from .onebot import OneBotWebSocketClient, OneBotHTTPClient
+from app.services.message_formatter import MessageFormatter
+from app.services.webhook_service import WebhookService
 
-__all__ = ["OneBotWebSocketClient", "OneBotHTTPClient"]
+__all__ = ["MessageFormatter", "WebhookService"]

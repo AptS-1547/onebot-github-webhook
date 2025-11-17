@@ -12,16 +12,16 @@
 # limitations under the License.
 
 """
-OneBot GitHub Webhook core 模块
-本模块用于处理 GitHub Webhook 事件的匹配逻辑，包括验证签名、查找匹配的 webhook 配置和提取 push 事件数据。
+核心功能模块
+
+本模块提供应用的核心功能实现。
+
 作者：AptS:1547
-版本：0.1.0-alpha
+版本：0.2.0
 日期：2025-04-17
 本程序遵循 Apache License 2.0 许可证
 """
 
-from .github import GitHubWebhookHandler
+from app.core.github.webhook import GitHubWebhookHandler
 
-__all__ = [
-    "GitHubWebhookHandler",
-]
+__all__ = ["GitHubWebhookHandler"]
