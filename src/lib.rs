@@ -5,6 +5,7 @@
 
 pub mod config;
 pub mod error;
+pub mod feishu;
 pub mod github;
 pub mod matching;
 pub mod message;

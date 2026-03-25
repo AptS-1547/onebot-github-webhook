@@ -24,7 +24,7 @@ pub enum MessageSegment {
 }
 
 impl MessageSegment {
-    /// Create a text message segment.
+    ///Create a text message segment.
     pub fn text(content: impl Into<String>) -> Self {
         MessageSegment::Text {
             text: content.into(),
@@ -44,6 +44,17 @@ impl MessageSegment {
 
 /// A complete message consisting of one or more segments.
 pub type Message = Vec<MessageSegment>;
+
+/// Convert a Message to a plain text string (for non-OneBot targets).
+pub fn message_to_plain_text(message: &Message) -> String {
+    message
+        .iter()
+        .filter_map(|seg| match seg {
+            MessageSegment::Text { text } => Some(text.as_str()),
+            _ => None,
+        })
+        .collect()
+}
 
 /// Helper to build messages
 pub struct MessageBuilder {

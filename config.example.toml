@@ -1,12 +1,15 @@
-# OneBot GitHub Webhook Configuration Example
-# Copy this file to config.toml and modify as needed
-
 ENV = "production"
 
 # OneBot connection settings
 ONEBOT_URL = "ws://localhost:8080/ws"  # or wss:// for secure connection
 ONEBOT_PROTOCOL_TYPE = "ws"            # "ws" or "http"
 ONEBOT_ACCESS_TOKEN = ""               # Leave empty if not required
+
+# Feishu (Lark) webhook bot targets (optional, can have multiple)
+[[FEISHU]]
+name = "main"                           # Referenced by SEND_TO_FEISHU in each webhook rule
+webhook_url = "https://open.feishu.cn/open-apis/bot/v2/hook/xxx"
+secret = ""                             # Leave empty if security signature is not enabled
 
 # GitHub Webhook configurations (supports multiple)
 [[GITHUB_WEBHOOK]]
@@ -28,6 +31,7 @@ EVENTS = [
   "issue_comment",
   "release",
 ]
+SEND_TO_FEISHU = ["main"]              # List of FEISHU names to send to; omit or leave empty to skip
 
   [[GITHUB_WEBHOOK.ONEBOT]]
   type = "group"

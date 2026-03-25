@@ -13,10 +13,12 @@ use axum::{
 use std::sync::Arc;
 
 use crate::config::TargetType;
+use crate::feishu::FeishuClient;
 use crate::github::formatter::{
     format_issue_comment_message, format_issue_message, format_pull_request_message,
     format_push_message, format_release_message,
 };
+use crate::message::message_to_plain_text;
 use crate::github::payload::{
     extract_issue_comment_data, extract_issue_data, extract_pull_request_data, extract_push_data,
     extract_release_data,
@@ -239,6 +241,26 @@ pub async fn github_webhook(
                 }
                 Err(e) => {
                     tracing::error!("Failed to send message: {}", e);
+                }
+            }
+        }
+
+        // Send to Feishu targets
+        if !matched_webhook.send_to_feishu.is_empty() {
+            let plain_text = message_to_plain_text(&msg);
+            for feishu_name in &matched_webhook.send_to_feishu {
+                if let Some(feishu_cfg) = state
+                    .config
+                    .feishu
+                    .iter()
+                    .find(|f| &f.name == feishu_name)
+                {
+                    let client = FeishuClient::new(feishu_cfg.clone());
+                    if let Err(e) = client.send(&plain_text).await {
+                        tracing::error!("Failed to send Feishu message to '{}': {}", feishu_name, e);
+                    }
+                } else {
+                    tracing::warn!("Feishu config '{}' not found", feishu_name);
                 }
             }
         }

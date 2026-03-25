@@ -33,6 +33,15 @@ pub enum ProtocolType {
     Http,
 }
 
+/// Feishu (Lark) webhook target configuration
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct FeishuConfig {
+    pub name: String,
+    pub webhook_url: String,
+    #[serde(default)]
+    pub secret: String,
+}
+
 /// Webhook configuration for a specific repository/branch pattern
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "UPPERCASE")]
@@ -43,6 +52,8 @@ pub struct WebhookConfig {
     pub secret: String,
     pub events: Vec<String>,
     pub onebot: Vec<OnebotTarget>,
+    #[serde(default)]
+    pub send_to_feishu: Vec<String>,
 }
 
 /// Main application configuration
@@ -63,6 +74,9 @@ pub struct Config {
 
     #[serde(default)]
     pub github_webhook: Vec<WebhookConfig>,
+
+    #[serde(default, rename = "FEISHU")]
+    pub feishu: Vec<FeishuConfig>,
 }
 
 fn default_env() -> String {
@@ -127,6 +141,7 @@ impl Default for Config {
             onebot_protocol_type: ProtocolType::Ws,
             onebot_access_token: String::new(),
             github_webhook: vec![],
+            feishu: vec![],
         }
     }
 }
