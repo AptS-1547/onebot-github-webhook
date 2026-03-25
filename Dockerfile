@@ -1,36 +1,51 @@
-FROM python:3.12.9-alpine3.21
-
-ARG VERSION=1.0.0
-
-LABEL maintainer="AptS-1547 <apts-1547@esaps.net>"
-LABEL version="${VERSION}"
-LABEL description="A simple webhook server for GitHub to send events to a OneBot (CQHTTP) bot."
-LABEL homepage="https://onebot-github-webhook.docs.ecaps.top/"
-LABEL repository="https://github.com/AptS-1547/onebot-github-webhook"
-LABEL license="Apache-2.0"
-
-LABEL org.opencontainers.image.source="https://github.com/AptS-1547/onebot-github-webhook"
-LABEL org.opencontainers.image.description="A simple webhook server for GitHub to send events to a OneBot (CQHTTP) bot."
-LABEL org.opencontainers.image.licenses="Apache-2.0"
+# Build stage
+FROM rust:1.83-bookworm AS builder
 
 WORKDIR /app
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+# Copy manifests
+COPY Cargo.toml Cargo.lock ./
 
-RUN mkdir -p /app/templates \
-    && adduser --disabled-password --gecos "" appuser \
-    && chown -R appuser:appuser /app
+# Create dummy main to cache dependencies
+RUN mkdir src && \
+    echo 'fn main() {}' > src/main.rs && \
+    echo 'pub mod config; pub mod error; pub mod github; pub mod matching; pub mod message; pub mod onebot; pub mod routes; pub struct AppState {}' > src/lib.rs && \
+    mkdir -p src/github src/onebot src/routes && \
+    echo 'pub mod formatter; pub mod payload; pub mod webhook;' > src/github/mod.rs && \
+    echo 'pub mod client; pub mod http; pub mod websocket;' > src/onebot/mod.rs && \
+    echo 'pub mod github;' > src/routes/mod.rs && \
+    touch src/config.rs src/error.rs src/matching.rs src/message.rs \
+          src/github/formatter.rs src/github/payload.rs src/github/webhook.rs \
+          src/onebot/client.rs src/onebot/http.rs src/onebot/websocket.rs \
+          src/routes/github.rs
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Build dependencies (this layer will be cached)
+RUN cargo build --release && rm -rf src
 
-COPY --chown=appuser:appuser . .
+# Copy actual source
+COPY src ./src
 
-VOLUME [ "/app/templates" ]
+# Build the actual binary
+RUN touch src/main.rs src/lib.rs && cargo build --release
 
-USER appuser
+# Runtime stage
+FROM debian:bookworm-slim
 
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    libssl3 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy binary
+COPY --from=builder /app/target/release/onebot-github-webhook /app/onebot-github-webhook
+
+# Default config location
+VOLUME /app/config
+
+# Expose port
 EXPOSE 8000
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run
+CMD ["/app/onebot-github-webhook"]

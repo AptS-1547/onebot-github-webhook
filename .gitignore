@@ -1,3 +1,4 @@
+# Python
 .venv/
 .pytest_cache/
 __pycache__/
@@ -6,6 +7,11 @@ __pycache__/
 *.pyo
 *.pyd
 
-.env
+# Rust
+/target/
 
+# Config
+.env
 /config.yaml
+
+.DS_Store
