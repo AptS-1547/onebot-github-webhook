@@ -1,0 +1,38 @@
+# OneBot GitHub Webhook Configuration Example
+# Copy this file to config.toml and modify as needed
+
+ENV = "production"
+
+# OneBot connection settings
+ONEBOT_URL = "ws://localhost:8080/ws"  # or wss:// for secure connection
+ONEBOT_PROTOCOL_TYPE = "ws"            # "ws" or "http"
+ONEBOT_ACCESS_TOKEN = ""               # Leave empty if not required
+
+# GitHub Webhook configurations (supports multiple)
+[[GITHUB_WEBHOOK]]
+NAME = "example"
+REPO = [
+  "your-org/your-repo",
+  "your-org/*",          # Wildcard: all repos in org
+]
+BRANCH = [
+  "main",
+  "master",
+  "feature/*",           # Wildcard: all feature branches
+]
+SECRET = "your-github-webhook-secret"
+EVENTS = [
+  "push",
+  "pull_request",
+  "issues",
+  "issue_comment",
+  "release",
+]
+
+  [[GITHUB_WEBHOOK.ONEBOT]]
+  type = "group"
+  id = 123456789          # QQ group ID
+
+  [[GITHUB_WEBHOOK.ONEBOT]]
+  type = "private"
+  id = 987654321          # QQ user ID

@@ -70,8 +70,8 @@ fn default_env() -> String {
 }
 
 impl Config {
-    /// Load configuration from a YAML file
-    pub fn from_yaml<P: AsRef<Path>>(path: P) -> Result<Self, AppError> {
+    /// Load configuration from a TOML file
+    pub fn from_toml<P: AsRef<Path>>(path: P) -> Result<Self, AppError> {
         let path = path.as_ref();
 
         if !path.exists() {
@@ -80,7 +80,7 @@ impl Config {
         }
 
         let content = std::fs::read_to_string(path)?;
-        let config: Config = serde_yaml::from_str(&content)?;
+        let config: Config = toml::from_str(&content)?;
 
         // Validate URL format
         config.validate()?;

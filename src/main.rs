@@ -30,7 +30,7 @@ async fn main() -> anyhow::Result<()> {
     tracing::info!("Starting OneBot GitHub Webhook Server...");
 
     // Load configuration
-    let config = Config::from_yaml("config.yaml")?;
+    let config = Config::from_toml("config.toml")?;
     tracing::info!("Configuration loaded: env={}", config.env);
     tracing::info!(
         "OneBot URL: {}, Protocol: {:?}",
